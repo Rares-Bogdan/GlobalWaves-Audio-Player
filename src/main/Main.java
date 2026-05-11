@@ -17,7 +17,16 @@ import musicplayer.LastLoadedSource;
 import musicplayer.LastPlaylistSelected;
 import musicplayer.MusicPlayer;
 import musicplayer.LastPodcastSelected;
-import musicplayer.playercommands.*;
+import musicplayer.playercommands.Backward;
+import musicplayer.playercommands.BackwardTracker;
+import musicplayer.playercommands.Forward;
+import musicplayer.playercommands.ForwardTracker;
+import musicplayer.playercommands.Like;
+import musicplayer.playercommands.Next;
+import musicplayer.playercommands.Prev;
+import musicplayer.playercommands.Repeat;
+import musicplayer.playercommands.Shuffle;
+import musicplayer.playercommands.Status;
 import musicplayer.playercommands.loadresults.LoadPlaylistResult;
 import musicplayer.playercommands.loadresults.LoadPodcastResult;
 import musicplayer.playercommands.loadresults.LoadSongResult;
@@ -42,7 +51,11 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static messages.AddRemoveInPlaylistMessage.*;
+import static messages.AddRemoveInPlaylistMessage.loadSourceBeforeAddOrRemoveMessage;
+import static messages.AddRemoveInPlaylistMessage.loadedSourceNotSongMessage;
+import static messages.AddRemoveInPlaylistMessage.playlistNotExistMessage;
+import static messages.AddRemoveInPlaylistMessage.successfullyAddedToPlaylistMessage;
+import static messages.AddRemoveInPlaylistMessage.successfullyRemovedFromPlaylistMessage;
 import static messages.CreatePlaylistMessage.sameNamePlaylistMessage;
 import static messages.CreatePlaylistMessage.successPlaylistMessage;
 import static messages.LikedMessage.loadSourceBeforeLikeMessage;
@@ -135,8 +148,8 @@ public final class Main {
             if (usersData.get(position).getMusicPlayer().isPlayPause() && usersData.get(position).
                     getLastLoadedSource() != null && currentCommandIndex > 0) {
                 usersData.get(position).setCurrentRemainedTime(usersData.get(position).
-                        getLastLoadedSource().getDuration() - (currentCommand.getTimestamp() -
-                        commands.get(currentCommandIndex - 1).getTimestamp()));
+                        getLastLoadedSource().getDuration() - (currentCommand.getTimestamp()
+                        - commands.get(currentCommandIndex - 1).getTimestamp()));
                 if (usersData.get(position).getCurrentRemainedTime() < 0 && !usersData.get(
                         position).getSelectedPodcast().get() && !usersData.get(position).
                         getSelectedPlaylist().get() && usersData.get(position).getStatus().
@@ -167,7 +180,7 @@ public final class Main {
                     usersData.get(position).getUser().getUsername()));
                 }
             }
-            switch(currentCommand.getCommand()) {
+            switch (currentCommand.getCommand()) {
                 case CheckerConstants.SEARCH_COMMAND -> {
                     usersData.get(position).setLastLoadedSource(new LastLoadedSource("", 0, new
                             AtomicBoolean(false)));
@@ -182,9 +195,9 @@ public final class Main {
                     backwardTracker.setHasBeenBackwarded(false);
                     usersData.get(position).setCannotSelectYet(new AtomicBoolean(false));
                     usersData.get(position).setCurrentPlaylistSelected("");
-                    ArrayList<String> lastSearchResult = searchCommand(currentCommand, library, objectMapper,
-                            usersData.get(position).getLastSearchResult(), usersData.get(position).
-                                    getSearchedSongs(), usersData.get(position).
+                    ArrayList<String> lastSearchResult = searchCommand(currentCommand, library,
+                            objectMapper, usersData.get(position).getLastSearchResult(), usersData.
+                                    get(position).getSearchedSongs(), usersData.get(position).
                                     getSearchedPodcast(), usersData.get(position).
                                     getSearchedPlaylist(), allPlaylists, outputs, usersData.get(
                                             position));
@@ -228,14 +241,8 @@ public final class Main {
                                     getTimestamp();
                         }
                     }
-                    int generalPreviousCommandTimestamp = -1;
-                    if (currentCommandIndex > 0) {
-                        generalPreviousCommandTimestamp = commands.get(currentCommandIndex - 1).
-                                getTimestamp();
-                    }
                     statusCommand(objectMapper, currentCommand, usersData.get(position).
                             getLastLoadedSource().getName(), usersData.get(position).
-                            getLastLoadedSource().getDuration(), usersData.get(position).
                             getStatus(), outputs, usersData.get(position).
                             getCurrentRemainedTime(), usersData.get(position),
                             previousCommandTimestamp);
@@ -255,7 +262,8 @@ public final class Main {
                             getLoadedSource(), usersData.get(position).getSelectedSong(),
                             usersData.get(position).getNoLoadedSourceAfterSearch(),
                             usersData.get(position).getPreferredSongs(), usersData.get(position).
-                                    getLastLoadedSource(), library, outputs, likesForEachSongInLibrary);
+                                    getLastLoadedSource(), library, outputs,
+                            likesForEachSongInLibrary);
                 case CheckerConstants.ADD_REMOVE_IN_PLAYLIST_COMMAND ->
                     addRemoveInPlaylistCommand(objectMapper, currentCommand, usersData.
                             get(position).getLoadedSource(), usersData.get(position).
@@ -297,8 +305,7 @@ public final class Main {
                 }
                 case CheckerConstants.FOLLOW_COMMAND ->
                     followCommand(objectMapper, currentCommand, usersData.get(position), outputs,
-                            getSearchablePlaylistForUser(allPlaylists, usersData.get(position).
-                            getUser().getUsername()), library, allPlaylists);
+                            allPlaylists);
                 case CheckerConstants.SWITCH_VISIBILITY_COMMAND ->
                     switchVisibilityCommand(objectMapper, currentCommand, usersData.get(position).
                             getUserPlaylists(), outputs);
@@ -308,7 +315,8 @@ public final class Main {
                 case CheckerConstants.GET_TOP_FIVE_SONGS_COMMAND ->
                         getTop5SongsCommand(objectMapper, currentCommand, library,
                                 likesForEachSongInLibrary, outputs);
-
+                default -> {
+                }
             }
             currentCommandIndex++;
         }
@@ -317,15 +325,32 @@ public final class Main {
         objectWriter.writeValue(new File(filePathOutput), outputs);
     }
 
-    public static ArrayList<String> searchCommand(Command currentCommand, LibraryInput library,
-                              ObjectMapper objectMapper, ArrayList<String> lastSearchResult,
+    /***
+     *
+     * @param currentCommand current command used
+     * @param library library containing data for all songs, podcasts and users
+     * @param objectMapper object used to convert data to JSON format
+     * @param lastSearchResult a list of strings resulted after the last search command
+     *                         (can be songs, playlists or podcasts)
+     * @param searchedSongs determines if the last search was made on songs
+     * @param searchedPodcast determines if the last search was made on podcasts
+     * @param searchedPlaylists determines if the last search was made on playlists
+     * @param allPlaylists all existing playlists
+     * @param outputs object used to print the converted into JSON data
+     * @param userApp object used to store all the data concerning a user
+     * @return the list contained in lastSearchResult
+     */
+    public static ArrayList<String> searchCommand(final Command currentCommand,
+                                                  final LibraryInput library,
+                              final ObjectMapper objectMapper, ArrayList<String> lastSearchResult,
                               AtomicBoolean searchedSongs, AtomicBoolean searchedPodcast,
                                                   AtomicBoolean searchedPlaylists,
-                                                  ArrayList<Playlist> allPlaylists,
-                                                  ArrayNode outputs, UserApp userApp) {
-        switch(currentCommand.getType()) {
+                                                  final ArrayList<Playlist> allPlaylists,
+                                                  final ArrayNode outputs, final UserApp userApp) {
+        switch (currentCommand.getType()) {
             case CheckerConstants.SEARCH_TYPE_SONG -> {
-                SearchBarSongResults searchBarSongResults = new SearchBarSongResults(library.getSongs());
+                SearchBarSongResults searchBarSongResults = new SearchBarSongResults(library.
+                        getSongs());
                 ObjectNode objectNode = searchBarSongResults.searchResult(objectMapper,
                         currentCommand);
                 outputs.add(objectNode);
@@ -357,7 +382,8 @@ public final class Main {
                         allPlaylists, currentCommand.getUsername());
                 SearchBarPlaylistsResult searchBarPlaylistsResult = new
                         SearchBarPlaylistsResult(searchablePlaylists);
-                ObjectNode objectNode = searchBarPlaylistsResult.searchResult(objectMapper, currentCommand);
+                ObjectNode objectNode = searchBarPlaylistsResult.searchResult(objectMapper,
+                        currentCommand);
                 outputs.add(objectNode);
                 lastSearchResult = searchBarPlaylistsResult.getLastSearchResult();
                 if (!lastSearchResult.isEmpty()) {
@@ -367,17 +393,36 @@ public final class Main {
                     userApp.setCannotSelectYet(new AtomicBoolean(false));
                 }
             }
+            default -> { }
         }
         return lastSearchResult;
     }
 
-    public static void selectCommand(Command currentCommand, ObjectMapper objectMapper,
-                                     ArrayList<String> lastSearchResult,
-                                     AtomicBoolean searchedSongs, AtomicBoolean selectedSong,
-                                     AtomicBoolean selectedPodcast, AtomicBoolean searchedPodcast,
-                                     AtomicBoolean searchedPlaylists, AtomicBoolean selectedPlaylist,
-                                     ArrayNode outputs, AtomicInteger lastIndexSelected,
-                                     UserApp userApp) {
+    /***
+     *
+     * @param currentCommand current command used
+     * @param objectMapper object used to convert data to JSON format
+     * @param lastSearchResult a list of strings resulted after the last search command
+     *                         (can be songs, playlists or podcasts)
+     * @param searchedSongs determines if the last search was made on songs
+     * @param selectedSong determines if the last selection was made on a song
+     * @param selectedPodcast determines if the last selection was made on a podcast
+     * @param searchedPodcast determines if the last search was made on podcasts
+     * @param searchedPlaylists determines if the last search was made on playlists
+     * @param selectedPlaylist determines if the last selection was made on a playlist
+     * @param outputs object used to print the converted into JSON data
+     * @param lastIndexSelected position of the selected audio file from the lastSearchResult list
+     * @param userApp object used to store all the data concerning a user
+     */
+    public static void selectCommand(final Command currentCommand, final ObjectMapper objectMapper,
+                                     final ArrayList<String> lastSearchResult,
+                                     final AtomicBoolean searchedSongs, AtomicBoolean selectedSong,
+                                     AtomicBoolean selectedPodcast,
+                                     final AtomicBoolean searchedPodcast,
+                                     final AtomicBoolean searchedPlaylists,
+                                     AtomicBoolean selectedPlaylist,
+                                     final ArrayNode outputs, AtomicInteger lastIndexSelected,
+                                     final UserApp userApp) {
         SelectResult selectResult = new SelectResult(currentCommand.getItemNumber());
         ObjectNode objectNode = selectResult.getObjectNodeForSelectResult(
                 objectMapper, currentCommand, lastSearchResult, userApp.getCannotSelectYet().
@@ -403,21 +448,49 @@ public final class Main {
         }
     }
 
-    public static LastLoadedSource loadCommand(AtomicBoolean selectedSong, ArrayList<String> lastSearchResult,
-                                   AtomicInteger lastIndexSelected, ObjectMapper objectMapper,
-                                   Command currentCommand, ArrayNode outputs,
-                                   AtomicBoolean selectedPodcast, AtomicBoolean selectedPlaylist,
-                                   AtomicBoolean noLoadedSourceAfterSearch,
-                                   ArrayList<Playlist> searchablePlaylists,
-                                   LastPodcastSelected lastPodcastSelected,
-                                   LastPlaylistSelected lastPlaylistSelected,
-                                   MusicPlayer musicPlayer, AtomicBoolean loadedSource,
-                                   LibraryInput library, LastLoadedSource lastLoadedSource,
-                                               Status status, UserApp userApp) {
+    /***
+     *
+     * @param selectedSong determines if the last selection was made on a song
+     * @param lastSearchResult a list of strings resulted after the last search command
+     *                         (can be songs, playlists or podcasts)
+     * @param lastIndexSelected position of the selected audio file from the lastSearchResult list
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param outputs object used to print the converted into JSON data
+     * @param selectedPodcast determines if the last selection was made on a podcast
+     * @param selectedPlaylist determines if the last selection was made on a playlist
+     * @param noLoadedSourceAfterSearch used to determine if there is not a source loaded after a
+     *                                  search has been done
+     * @param searchablePlaylists a list of playlists that can be found by a user (public
+     *                            playlists or said user's own playlists)
+     * @param lastPodcastSelected object used to contain data for the last podcast selected
+     * @param lastPlaylistSelected object used to contain data for the last playlist selected
+     * @param musicPlayer object used to keep track of the play / pause status of a source
+     * @param loadedSource determines if a source is loaded
+     * @param library library containing data for all songs, podcasts and users
+     * @param lastLoadedSource object used to contain data for the last loaded source
+     * @param status object used to contain data for the current status of the user
+     * @param userApp object used to store all the data concerning a user
+     * @return the last loaded source
+     */
+    public static LastLoadedSource loadCommand(final AtomicBoolean selectedSong,
+                                               final ArrayList<String> lastSearchResult,
+                                   final AtomicInteger lastIndexSelected,
+                                               final ObjectMapper objectMapper,
+                                   final Command currentCommand, ArrayNode outputs,
+                                   final AtomicBoolean selectedPodcast,
+                                               final AtomicBoolean selectedPlaylist,
+                                   final AtomicBoolean noLoadedSourceAfterSearch,
+                                   final ArrayList<Playlist> searchablePlaylists,
+                                   final LastPodcastSelected lastPodcastSelected,
+                                   final LastPlaylistSelected lastPlaylistSelected,
+                                   final MusicPlayer musicPlayer, final AtomicBoolean loadedSource,
+                                   final LibraryInput library, LastLoadedSource lastLoadedSource,
+                                               final Status status, final UserApp userApp) {
         LastLoadedSource lastLoadedSourceBackup = lastLoadedSource;
         if (!lastSearchResult.isEmpty()) {
             for (int currentSong = 0; currentSong < library.getSongs().size(); currentSong++) {
-                if (lastIndexSelected.get() <lastSearchResult.size()) {
+                if (lastIndexSelected.get() < lastSearchResult.size()) {
                     if (library.getSongs().get(currentSong).getName().compareTo(lastSearchResult.
                             get(lastIndexSelected.get())) == 0) {
                         lastLoadedSource = new LastLoadedSource(lastSearchResult.
@@ -444,11 +517,12 @@ public final class Main {
                                 getSongs().size());
                         ArrayList<Integer> currentStartPositions = new ArrayList<>();
                         currentStartPositions.add(0);
-                        for (int currentStart = 1; currentStart < searchablePlaylist.getSongs().size();
+                        for (int currentStart = 1; currentStart < searchablePlaylist.getSongs().
+                                size();
                              currentStart++) {
                             int currentStartPosition = 0;
-                            for (int songsBeforeCurrentOne = 0; songsBeforeCurrentOne < currentStart;
-                                 songsBeforeCurrentOne++) {
+                            for (int songsBeforeCurrentOne = 0; songsBeforeCurrentOne
+                                    < currentStart; songsBeforeCurrentOne++) {
                                 currentStartPosition += searchablePlaylist.getSongs().get(
                                         songsBeforeCurrentOne).getDuration();
                             }
@@ -457,8 +531,8 @@ public final class Main {
                         lastPlaylistSelected.setSongsStartsPositions(currentStartPositions);
                         lastPlaylistSelected.setCurrentSongName(songName);
                         lastPlaylistSelected.setCurrentPositionInPlaylist(new AtomicInteger(0));
-                        lastLoadedSource = new LastLoadedSource(songName, duration, new AtomicBoolean(
-                                false));
+                        lastLoadedSource = new LastLoadedSource(songName, duration, new
+                                AtomicBoolean(false));
                         break;
                     }
                 }
@@ -466,14 +540,14 @@ public final class Main {
             for (int currentPodcast = 0; currentPodcast < library.getPodcasts().size();
                  currentPodcast++) {
                 if (lastIndexSelected.get() < lastSearchResult.size()) {
-                    if (library.getPodcasts().get(currentPodcast).getName().compareTo(lastSearchResult.
-                            get(lastIndexSelected.get())) == 0) {
-                        lastPodcastSelected.setPodcastName(library.getPodcasts().get(currentPodcast).
-                                getName());
+                    if (library.getPodcasts().get(currentPodcast).getName().compareTo(
+                            lastSearchResult.get(lastIndexSelected.get())) == 0) {
+                        lastPodcastSelected.setPodcastName(library.getPodcasts().get(
+                                currentPodcast).getName());
                         String podcastEpisodeName;
                         int duration, totalDuration = 0;
-                        for (EpisodeInput currentEpisode : library.getPodcasts().get(currentPodcast).
-                                getEpisodes()) {
+                        for (EpisodeInput currentEpisode : library.getPodcasts().get(
+                                currentPodcast).getEpisodes()) {
                             totalDuration += currentEpisode.getDuration();
                         }
                         lastPodcastSelected.setTotalDurationOfPodcast(totalDuration);
@@ -492,16 +566,16 @@ public final class Main {
                             currentStartPositions.add(currentStartPosition);
                         }
                         lastPodcastSelected.setEpisodesStartsPositions(currentStartPositions);
-                        if (lastPodcastSelected.getEpisodeIndex().get() == -1 && lastPodcastSelected.
-                                getCurrentPositionOfPodcast().get() == -1) {
+                        if (lastPodcastSelected.getEpisodeIndex().get() == -1
+                                && lastPodcastSelected.getCurrentPositionOfPodcast().get() == -1) {
                             podcastEpisodeName = library.getPodcasts().get(currentPodcast).
                                     getEpisodes().getFirst().getName();
                             lastPodcastSelected.setCurrentEpisodeName(podcastEpisodeName);
                             duration = library.getPodcasts().get(currentPodcast).getEpisodes().
                                     getFirst().getDuration();
                             lastPodcastSelected.setCurrentPositionOfPodcast(new AtomicInteger(0));
-                            lastLoadedSource = new LastLoadedSource(podcastEpisodeName, duration, new
-                                    AtomicBoolean(false));
+                            lastLoadedSource = new LastLoadedSource(podcastEpisodeName, duration,
+                                    new AtomicBoolean(false));
                         } else if (lastPodcastSelected.getEpisodeIndex().get() > -1
                                 && lastPodcastSelected.getCurrentPositionOfPodcast().get() > -1) {
                             podcastEpisodeName = library.getPodcasts().get(currentPodcast).
@@ -509,8 +583,8 @@ public final class Main {
                                     getName();
                             lastPodcastSelected.setCurrentEpisodeName(podcastEpisodeName);
                             duration = lastPodcastSelected.getCurrentPositionOfPodcast().get();
-                            lastLoadedSource = new LastLoadedSource(podcastEpisodeName, duration, new
-                                    AtomicBoolean(false));
+                            lastLoadedSource = new LastLoadedSource(podcastEpisodeName, duration,
+                                    new AtomicBoolean(false));
                         }
                         break;
                     }
@@ -519,7 +593,8 @@ public final class Main {
         }
 
         if (selectedSong.get()) {
-            LoadSongResult loadSongResult = new LoadSongResult(selectedSong, lastSearchResult.get(lastIndexSelected.get()));
+            LoadSongResult loadSongResult = new LoadSongResult(selectedSong, lastSearchResult.get(
+                    lastIndexSelected.get()));
             if (loadedSource.get()) {
                 ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper,
                         currentCommand);
@@ -527,7 +602,8 @@ public final class Main {
                 outputs.add(objectNode);
                 lastLoadedSource = lastLoadedSourceBackup;
             } else {
-                ObjectNode objectNode = loadSongResult.loadResult(objectMapper, currentCommand, musicPlayer);
+                ObjectNode objectNode = loadSongResult.loadResult(objectMapper, currentCommand,
+                        musicPlayer);
                 outputs.add(objectNode);
                 loadedSource.set(true);
                 status.setPaused(false);
@@ -544,7 +620,8 @@ public final class Main {
                 outputs.add(objectNode);
                 lastLoadedSource = lastLoadedSourceBackup;
             } else {
-                ObjectNode objectNode = loadPodcastResult.loadResult(objectMapper, currentCommand, musicPlayer);
+                ObjectNode objectNode = loadPodcastResult.loadResult(objectMapper, currentCommand,
+                        musicPlayer);
                 outputs.add(objectNode);
                 loadedSource.set(true);
                 status.setPaused(false);
@@ -561,7 +638,8 @@ public final class Main {
                 outputs.add(objectNode);
                 lastLoadedSource = lastLoadedSourceBackup;
             } else {
-                ObjectNode objectNode = loadPlaylistResult.loadResult(objectMapper, currentCommand, musicPlayer);
+                ObjectNode objectNode = loadPlaylistResult.loadResult(objectMapper, currentCommand,
+                        musicPlayer);
                 outputs.add(objectNode);
                 loadedSource.set(true);
                 status.setPaused(false);
@@ -578,10 +656,21 @@ public final class Main {
         return lastLoadedSource;
     }
 
-    public static void statusCommand(ObjectMapper objectMapper, Command currentCommand,
-                                     String name, int remainedTime, Status status,
-                                     ArrayNode outputs, int currentRemainedTime, UserApp userApp,
-                                     int previousCommandTimestamp) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param name the name for the source we check the status of
+     * @param status status for the current user
+     * @param outputs object used to print the converted into JSON data
+     * @param currentRemainedTime the remained time until the audio source ends
+     * @param userApp object used to store all the data concerning a user
+     * @param previousCommandTimestamp timestamp of the command prior to the current one
+     */
+    public static void statusCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                     final String name, final Status status, final ArrayNode outputs,
+                                     final int currentRemainedTime, final UserApp userApp,
+                                     final int previousCommandTimestamp) {
         if (currentRemainedTime <= 0 && status.getRepeat().compareTo(CheckerConstants.NO_REPEAT)
                 == 0) {
             status.setName("");
@@ -618,7 +707,7 @@ public final class Main {
             if (status.isShuffle() && userApp.getSelectedPlaylist().get() && !userApp.
                     getLastPlaylistSelected().getPlaylistName().isEmpty()) {
                 for (int currentSong = userApp.getLastPlaylistSelected().
-                        getTotalNumberOfSongsInPlaylist() - 1; currentSong >= 0 ; currentSong--) {
+                        getTotalNumberOfSongsInPlaylist() - 1; currentSong >= 0; currentSong--) {
                     if (userApp.getLastPlaylistSelected().getCurrentPositionInPlaylist().get()
                             >= userApp.getLastPlaylistSelected().getSongsStartsPositions().get(
                             currentSong)) {
@@ -635,8 +724,7 @@ public final class Main {
                 updateRemainedTime = userApp.getLastPlaylistSelected().getSongsStartsPositions().
                         get(userApp.getLastPlaylistSelected().getSongIndex().get() + 1) - userApp.
                         getLastPlaylistSelected().getCurrentPositionInPlaylist().get();
-            }
-            else {
+            } else {
                 updateRemainedTime = userApp.getLastPlaylistSelected().getTotalDurationOfPlaylist()
                         - userApp.getLastPlaylistSelected().getCurrentPositionInPlaylist().get();
             }
@@ -658,10 +746,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void playPauseCommand(ObjectMapper objectMapper, Command currentCommand,
-                                        AtomicBoolean loadedSource,
-                                        MusicPlayer musicPlayer, ArrayNode outputs,
-                                        Status status) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param loadedSource determines if a source is loaded
+     * @param musicPlayer object used to keep track of the play / pause status of a source
+     * @param outputs object used to print the converted into JSON data
+     * @param status status for the current user
+     */
+    public static void playPauseCommand(final ObjectMapper objectMapper,
+                                        final Command currentCommand,
+                                        final AtomicBoolean loadedSource,
+                                        final MusicPlayer musicPlayer, final ArrayNode outputs,
+                                        final Status status) {
         if (loadedSource.get()) {
             musicPlayer.setPlayPause(!musicPlayer.isPlayPause());
         }
@@ -671,9 +769,19 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void createPlaylistCommand(ObjectMapper objectMapper, Command currentCommand,
-                                             ArrayList<Playlist> userPlaylists,
-                                             ArrayList<Playlist> allPlaylists, ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userPlaylists all playlists belonging to a user
+     * @param allPlaylists all existing playlists
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void createPlaylistCommand(final ObjectMapper objectMapper,
+                                             final Command currentCommand,
+                                             final ArrayList<Playlist> userPlaylists,
+                                             final ArrayList<Playlist> allPlaylists,
+                                             final ArrayNode outputs) {
         Playlist newPlaylist = new Playlist(new ArrayList<>(), true, currentCommand.
                 getPlaylistName(), 0);
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -698,12 +806,30 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void likeCommand(ObjectMapper objectMapper, Command currentCommand,
-                                   AtomicBoolean loadedSource, AtomicBoolean selectedSong,
-                                   AtomicBoolean noLoadedSourceAfterSearch,
-                                   Playlist preferredSongs, LastLoadedSource lastLoadedSource,
-                                   LibraryInput library, ArrayNode outputs,
-                                   ArrayList<Integer> likesForEachSongInLibrary) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param loadedSource determines if a source is loaded
+     * @param selectedSong determines if a song has been selected
+     * @param noLoadedSourceAfterSearch used to determine if there is not a source loaded after a
+     *                                  search has been done
+     * @param preferredSongs all songs that a user has liked
+     * @param lastLoadedSource contains data regarding the last source that has been loaded
+     * @param library library containing data for all songs, podcasts and users
+     * @param outputs object used to print the converted into JSON data
+     * @param likesForEachSongInLibrary a list that keeps track of how many likes each song in the
+     *                                  library has
+     */
+    public static void likeCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                   final AtomicBoolean loadedSource,
+                                   final AtomicBoolean selectedSong,
+                                   final AtomicBoolean noLoadedSourceAfterSearch,
+                                   final Playlist preferredSongs,
+                                   final LastLoadedSource lastLoadedSource,
+                                   final LibraryInput library,
+                                   final ArrayNode outputs,
+                                   final ArrayList<Integer> likesForEachSongInLibrary) {
         AtomicBoolean likedOrUnliked = new AtomicBoolean(false);
         for (SongInput currentSong : preferredSongs.getSongs()) {
             if (currentSong.getName().compareTo(lastLoadedSource.getName()) == 0 && selectedSong.
@@ -744,30 +870,43 @@ public final class Main {
                 }
             }
             if (songPosition > -1) {
-                Like newLike = new Like(loadedSource, selectedSong, likedOrUnliked, library.getSongs().
-                        get(songPosition));
-                ObjectNode objectNode = newLike.likedResult(objectMapper, currentCommand, preferredSongs);
+                Like newLike = new Like(loadedSource, selectedSong, likedOrUnliked, library.
+                        getSongs().get(songPosition));
+                ObjectNode objectNode = newLike.likedResult(objectMapper, currentCommand,
+                        preferredSongs);
                 outputs.add(objectNode);
             }
         }
 
     }
 
-    public static void addRemoveInPlaylistCommand(ObjectMapper objectMapper,
-                                                  Command currentCommand,
-                                                  AtomicBoolean loadedSource,
-                                                  AtomicBoolean selectedSong,
-                                                  LastLoadedSource lastLoadedSource,
-                                                  ArrayList<Playlist> userPlaylist,
-                                                  LibraryInput library, ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param loadedSource determines if a source is loaded
+     * @param selectedSong determines if a song has been selected
+     * @param lastLoadedSource contains data regarding the last source that has been loaded
+     * @param userPlaylist all playlists belonging to a user
+     * @param library library containing data for all songs, podcasts and users
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void addRemoveInPlaylistCommand(final ObjectMapper objectMapper,
+                                                  final Command currentCommand,
+                                                  final AtomicBoolean loadedSource,
+                                                  final AtomicBoolean selectedSong,
+                                                  final LastLoadedSource lastLoadedSource,
+                                                  final ArrayList<Playlist> userPlaylist,
+                                                  final LibraryInput library,
+                                                  final ArrayNode outputs) {
         ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper, currentCommand);
         if (currentCommand.getPlaylistId() - 1 >= userPlaylist.size()) {
             objectNode.put(CheckerConstants.MESSAGE_FIELD, playlistNotExistMessage());
         } else {
-            int songPosition= -1;
+            int songPosition = -1;
             for (int currentSong = 0; currentSong < library.getSongs().size(); currentSong++) {
-                if (library.getSongs().get(currentSong).getName().compareTo(lastLoadedSource.getName())
-                        == 0 && selectedSong.get()) {
+                if (library.getSongs().get(currentSong).getName().compareTo(lastLoadedSource.
+                        getName()) == 0 && selectedSong.get()) {
                     songPosition = currentSong;
                     break;
                 }
@@ -778,8 +917,8 @@ public final class Main {
             for (SongInput currentSong : userPlaylist.get(currentCommand.getPlaylistId() - 1).
                     getSongs()) {
                 if (songPosition > -1) {
-                    if (currentSong.getName().compareTo(library.getSongs().get(songPosition).getName())
-                            == 0 && selectedSong.get()) {
+                    if (currentSong.getName().compareTo(library.getSongs().get(songPosition).
+                            getName()) == 0 && selectedSong.get()) {
                         isAlreadyInPlaylist = true;
                         positionInPlaylist = currentSongPosition;
                         break;
@@ -808,8 +947,16 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void showPlaylistsCommand(ObjectMapper objectMapper, Command currentCommand,
-                                            UserApp userApp, ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void showPlaylistsCommand(final ObjectMapper objectMapper,
+                                            final Command currentCommand,
+                                            final UserApp userApp, final ArrayNode outputs) {
         ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper, currentCommand);
         ArrayList<ArrayList<String>> userPlaylistsSongNames = new ArrayList<>();
         for (int currentPlaylist = 0; currentPlaylist < userApp.getUserPlaylists().size();
@@ -840,8 +987,16 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void showPreferredSongsCommand(ObjectMapper objectMapper, Command currentCommand,
-                                                 UserApp userApp, ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void showPreferredSongsCommand(final ObjectMapper objectMapper,
+                                                 final Command currentCommand,
+                                                 final UserApp userApp, final ArrayNode outputs) {
         ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper, currentCommand);
         ArrayList<String> preferredSongsNames = new ArrayList<>();
         for (SongInput currentSong : userApp.getPreferredSongs().getSongs()) {
@@ -852,16 +1007,24 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void repeatCommand(ObjectMapper objectMapper, Command currentCommand,
-                                     UserApp userApp, ArrayNode outputs) {
-        boolean hasLoadedSource = (userApp.getSelectedSong().get() || userApp.getSelectedPlaylist().
-                get() || userApp.getSelectedPodcast().get()) && userApp.getLoadedSource().get();
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void repeatCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                     final UserApp userApp, final ArrayNode outputs) {
+        boolean hasLoadedSource = (userApp.getSelectedSong().get() || userApp.
+                getSelectedPlaylist().get() || userApp.getSelectedPodcast().get())
+                && userApp.getLoadedSource().get();
         Repeat repeat = new Repeat(userApp.getStatus().getRepeat().toLowerCase(), hasLoadedSource);
         if ((userApp.getSelectedSong().get() && !userApp.getLastLoadedSource().getName().
                 isEmpty()) && !userApp.getSelectedPlaylist().get() || (userApp.
                 getSelectedPodcast().get() && !userApp.getLastPodcastSelected().getPodcastName().
                 isEmpty())) {
-            switch(repeat.getRepeatState()) {
+            switch (repeat.getRepeatState()) {
                 case CheckerConstants.NO_REPEAT_STATE -> {
                     userApp.getStatus().setRepeat(CheckerConstants.REPEAT_ONCE);
                     repeat.setRepeatState(CheckerConstants.REPEAT_ONCE_STATE);
@@ -876,10 +1039,11 @@ public final class Main {
                     userApp.getStatus().setRepeat(CheckerConstants.NO_REPEAT);
                     repeat.setRepeatState(CheckerConstants.NO_REPEAT_STATE);
                 }
+                default -> { }
             }
         } else if (userApp.getSelectedPlaylist().get() && !userApp.getLastPlaylistSelected().
                 getPlaylistName().isEmpty()) {
-            switch(repeat.getRepeatState()) {
+            switch (repeat.getRepeatState()) {
                 case CheckerConstants.NO_REPEAT_STATE -> {
                     userApp.getStatus().setRepeat(CheckerConstants.REPEAT_ALL);
                     repeat.setRepeatState(CheckerConstants.REPEAT_ALL_STATE);
@@ -900,15 +1064,26 @@ public final class Main {
                     userApp.getLastPlaylistSelected().setCurrentSongToBeRepeatedIndex(new
                             AtomicInteger(-1));
                 }
+                default -> { }
             }
         }
         ObjectNode objectNode = repeat.repeatResult(objectMapper, currentCommand);
         outputs.add(objectNode);
     }
 
-    public static void shuffleCommand(ObjectMapper objectMapper, Command currentCommand,
-                                      UserApp userApp, ArrayNode outputs,
-                                      ArrayList<Playlist> searchablePlaylists) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param searchablePlaylists a list of playlists that can be found by a user (public
+     *                            playlists or said user's own playlists)
+     */
+    public static void shuffleCommand(final ObjectMapper objectMapper,
+                                      final Command currentCommand,
+                                      final UserApp userApp, final ArrayNode outputs,
+                                      final ArrayList<Playlist> searchablePlaylists) {
         if (!userApp.getLastPlaylistSelected().getPlaylistName().isEmpty() && userApp.
                 getSelectedPlaylist().get()) {
             ArrayList<Integer> songIndexes = new ArrayList<>();
@@ -987,9 +1162,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void nextCommand(ObjectMapper objectMapper, Command currentCommand,
-                                   UserApp userApp, ArrayNode outputs,
-                                   ArrayList<Playlist> searchablePlaylists, LibraryInput library) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param searchablePlaylists a list of playlists that can be found by a user (public
+     *                            playlists or said user's own playlists)
+     * @param library library containing data for all songs, podcasts and users
+     */
+    public static void nextCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                   final UserApp userApp, final ArrayNode outputs,
+                                   final ArrayList<Playlist> searchablePlaylists,
+                                   final LibraryInput library) {
         boolean hasLoadedSource = userApp.getLoadedSource().get();
         boolean isAtEnd = false;
         String nextTrack = "";
@@ -1016,8 +1202,8 @@ public final class Main {
                 userApp.getLastPlaylistSelected().setSongIndex(new AtomicInteger(userApp.
                         getLastPlaylistSelected().getSongIndex().get() + 1));
                 userApp.getLastPlaylistSelected().setCurrentSongName(nextTrack);
-                userApp.getLastPlaylistSelected().setCurrentPositionInPlaylist(new AtomicInteger(userApp.
-                        getLastPlaylistSelected().getSongsStartsPositions().get(userApp.
+                userApp.getLastPlaylistSelected().setCurrentPositionInPlaylist(new AtomicInteger(
+                        userApp.getLastPlaylistSelected().getSongsStartsPositions().get(userApp.
                                 getLastPlaylistSelected().getSongIndex().get())));
                 userApp.getStatus().setName(userApp.getLastPlaylistSelected().
                         getCurrentSongName());
@@ -1048,8 +1234,8 @@ public final class Main {
                 userApp.getLastPodcastSelected().setEpisodeIndex(new AtomicInteger(userApp.
                         getLastPodcastSelected().getEpisodeIndex().get() + 1));
                 userApp.getLastPodcastSelected().setCurrentEpisodeName(nextTrack);
-                userApp.getLastPodcastSelected().setCurrentPositionOfPodcast(new AtomicInteger(userApp.
-                        getLastPodcastSelected().getEpisodesStartsPositions().get(userApp.
+                userApp.getLastPodcastSelected().setCurrentPositionOfPodcast(new AtomicInteger(
+                        userApp.getLastPodcastSelected().getEpisodesStartsPositions().get(userApp.
                                 getLastPodcastSelected().getEpisodeIndex().get())));
                 userApp.getStatus().setName(userApp.getLastPodcastSelected().
                         getCurrentEpisodeName());
@@ -1071,9 +1257,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void prevCommand(ObjectMapper objectMapper, Command currentCommand,
-                                   UserApp userApp, ArrayNode outputs,
-                                   ArrayList<Playlist> searchablePlaylists, LibraryInput library) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param searchablePlaylists a list of playlists that can be found by a user (public
+     *                            playlists or said user's own playlists)
+     * @param library library containing data for all songs, podcasts and users
+     */
+    public static void prevCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                   final UserApp userApp, final ArrayNode outputs,
+                                   final ArrayList<Playlist> searchablePlaylists,
+                                   final LibraryInput library) {
         boolean hasLoadedSource = userApp.getLoadedSource().get();
         int secondsPassed = userApp.getLastLoadedSource().getDuration() - userApp.
                 getCurrentRemainedTime();
@@ -1110,8 +1307,8 @@ public final class Main {
                 userApp.getLastPlaylistSelected().setSongIndex(new AtomicInteger(userApp.
                         getLastPlaylistSelected().getSongIndex().get() - 1));
                 userApp.getLastPlaylistSelected().setCurrentSongName(prevTrack);
-                userApp.getLastPlaylistSelected().setCurrentPositionInPlaylist(new AtomicInteger(userApp.
-                        getLastPlaylistSelected().getSongsStartsPositions().get(userApp.
+                userApp.getLastPlaylistSelected().setCurrentPositionInPlaylist(new AtomicInteger(
+                        userApp.getLastPlaylistSelected().getSongsStartsPositions().get(userApp.
                                 getLastPlaylistSelected().getSongIndex().get())));
                 userApp.getStatus().setName(userApp.getLastPlaylistSelected().
                         getCurrentSongName());
@@ -1159,15 +1356,16 @@ public final class Main {
                         prevTrack = currentPodcast.getEpisodes().get(userApp.
                                 getLastPodcastSelected().getEpisodeIndex().get() - 1).getName();
                         updateDuration = currentPodcast.getEpisodes().get(userApp.
-                                getLastPodcastSelected().getEpisodeIndex().get() - 1).getDuration();
+                                getLastPodcastSelected().getEpisodeIndex().get() - 1).
+                                getDuration();
                         break;
                     }
                 }
                 userApp.getLastPodcastSelected().setEpisodeIndex(new AtomicInteger(userApp.
                         getLastPodcastSelected().getEpisodeIndex().get() - 1));
                 userApp.getLastPodcastSelected().setCurrentEpisodeName(prevTrack);
-                userApp.getLastPodcastSelected().setCurrentPositionOfPodcast(new AtomicInteger(userApp.
-                        getLastPodcastSelected().getEpisodesStartsPositions().get(userApp.
+                userApp.getLastPodcastSelected().setCurrentPositionOfPodcast(new AtomicInteger(
+                        userApp.getLastPodcastSelected().getEpisodesStartsPositions().get(userApp.
                                 getLastPodcastSelected().getEpisodeIndex().get())));
                 userApp.getStatus().setName(userApp.getLastPodcastSelected().
                         getCurrentEpisodeName());
@@ -1212,9 +1410,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void forwardCommand(ObjectMapper objectMapper, Command currentCommand,
-                                      UserApp userApp, ArrayNode outputs, LibraryInput library,
-                                      ForwardTracker forwardTracker) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param library library containing data for all songs, podcasts and users
+     * @param forwardTracker checks if a podcast episode has been forwarded
+     */
+    public static void forwardCommand(final ObjectMapper objectMapper,
+                                      final Command currentCommand,
+                                      final UserApp userApp, final ArrayNode outputs,
+                                      final LibraryInput library,
+                                      final ForwardTracker forwardTracker) {
         boolean hasLoadedSource = userApp.getLoadedSource().get();
         boolean isLoadedSourcePodcast = !userApp.getLastPodcastSelected().getPodcastName().
                 isEmpty() && userApp.getSelectedPodcast().get();
@@ -1228,14 +1437,14 @@ public final class Main {
             } else {
                 String forwardEpisodeName = "";
                 int updateDuration = 0;
-                int currentIndex = 0;
                 for (PodcastInput currentPodcast : library.getPodcasts()) {
                     if (currentPodcast.getName().compareTo(userApp.getLastPodcastSelected().
                             getPodcastName()) == 0) {
-                        if (userApp.getLastPodcastSelected().getEpisodeIndex().get() !=
-                                currentPodcast.getEpisodes().size() - 1) {
+                        if (userApp.getLastPodcastSelected().getEpisodeIndex().get()
+                                != currentPodcast.getEpisodes().size() - 1) {
                             forwardEpisodeName = currentPodcast.getEpisodes().get(userApp.
-                                    getLastPodcastSelected().getEpisodeIndex().get() + 1).getName();
+                                    getLastPodcastSelected().getEpisodeIndex().get() + 1).
+                                    getName();
                             updateDuration = currentPodcast.getEpisodes().get(userApp.
                                             getLastPodcastSelected().getEpisodeIndex().get() + 1).
                                     getDuration();
@@ -1248,7 +1457,6 @@ public final class Main {
                         }
                         break;
                     }
-                    currentIndex++;
                 }
                 if (userApp.getLastPodcastSelected().getCurrentPositionOfPodcast().get()
                         + CheckerConstants.FORWARD_BACKWARD_TIME_SKIP >= userApp.
@@ -1280,9 +1488,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void backwardCommand(ObjectMapper objectMapper, Command currentCommand,
-                                      UserApp userApp, ArrayNode outputs, LibraryInput library,
-                                       BackwardTracker backwardTracker) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param library library containing data for all songs, podcasts and users
+     * @param backwardTracker checks if a podcast episode has been rewound
+     */
+    public static void backwardCommand(final ObjectMapper objectMapper,
+                                       final Command currentCommand,
+                                      final UserApp userApp, final ArrayNode outputs,
+                                       final LibraryInput library,
+                                       final BackwardTracker backwardTracker) {
         boolean hasLoadedSource = userApp.getLoadedSource().get();
         boolean isLoadedSourcePodcast = !userApp.getLastPodcastSelected().getPodcastName().
                 isEmpty() && userApp.getSelectedPodcast().get();
@@ -1354,10 +1573,17 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void followCommand(ObjectMapper objectMapper, Command currentCommand,
-                                     UserApp userApp, ArrayNode outputs,
-                                     ArrayList<Playlist> searchablePlaylists,
-                                     LibraryInput library, ArrayList<Playlist> allPlaylists) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
+     * @param outputs object used to print the converted into JSON data
+     * @param allPlaylists all existing playlists
+     */
+    public static void followCommand(final ObjectMapper objectMapper, final Command currentCommand,
+                                     final UserApp userApp, final ArrayNode outputs,
+                                     final ArrayList<Playlist> allPlaylists) {
         boolean hasSelectedSource = userApp.getSelectedSong().get() || userApp.
                 getSelectedPodcast().get() || userApp.getSelectedPlaylist().get();
         boolean isSelectedSourcePlaylist = !userApp.getCurrentPlaylistSelected().isEmpty()
@@ -1408,9 +1634,17 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    private static void switchVisibilityCommand(ObjectMapper objectMapper, Command currentCommand,
-                                                ArrayList<Playlist> userPlaylists,
-                                                ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param userPlaylists all playlists belonging to a user
+     * @param outputs object used to print the converted into JSON data
+     */
+    private static void switchVisibilityCommand(final ObjectMapper objectMapper,
+                                                final Command currentCommand,
+                                                final ArrayList<Playlist> userPlaylists,
+                                                final ArrayNode outputs) {
         boolean tooHighIdPlaylist = currentCommand.getPlaylistId() > userPlaylists.size();
         boolean visibilityStatus = false;
         int foundPlaylistIndex = -1;
@@ -1436,10 +1670,20 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void getTop5SongsCommand(ObjectMapper objectMapper, Command currentCommand,
-                                    LibraryInput library,
-                                    ArrayList<Integer> likesForEachSongInLibrary,
-                                    ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param library library containing data for all songs, podcasts and users
+     * @param likesForEachSongInLibrary a list that keeps track of how many likes each song in the
+     *                                  library has
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void getTop5SongsCommand(final ObjectMapper objectMapper,
+                                           final Command currentCommand,
+                                    final LibraryInput library,
+                                    final ArrayList<Integer> likesForEachSongInLibrary,
+                                    final ArrayNode outputs) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.TIMESTAMP_FIELD, currentCommand.getTimestamp());
@@ -1478,9 +1722,17 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    public static void getTop5PlaylistsCommand(ObjectMapper objectMapper, Command currentCommand,
-                                               ArrayList<Playlist> allPlaylists,
-                                               ArrayNode outputs) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @param allPlaylists all existing playlists
+     * @param outputs object used to print the converted into JSON data
+     */
+    public static void getTop5PlaylistsCommand(final ObjectMapper objectMapper,
+                                               final Command currentCommand,
+                                               final ArrayList<Playlist> allPlaylists,
+                                               final ArrayNode outputs) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.TIMESTAMP_FIELD, currentCommand.getTimestamp());
@@ -1511,13 +1763,26 @@ public final class Main {
         outputs.add(objectNode);
     }
 
-    private static Playlist getPlaylist(ArrayList<Playlist> searchablePlaylists,
-                                        int currentPlaylist) {
+    /***
+     *
+     * @param searchablePlaylists all playlists a user can find (contains said user's playlists
+     *                            and public playlists)
+     * @param currentPlaylist index for the playlist we want to get
+     * @return a playlist in the searchable list of playlists of a user
+     */
+    private static Playlist getPlaylist(final ArrayList<Playlist> searchablePlaylists,
+                                        final int currentPlaylist) {
         return searchablePlaylists.get(currentPlaylist);
     }
 
-    public static int getUserPositionByUsername(ArrayList<UserApp> usersData,
-                                                    String username) {
+    /***
+     *
+     * @param usersData a list containing all the objects that keep all the data for the users
+     * @param username username of a user
+     * @return user's position in the list of users
+     */
+    public static int getUserPositionByUsername(final ArrayList<UserApp> usersData,
+                                                    final String username) {
         int result = -1;
         for (int currentUser = 0; currentUser < usersData.size(); currentUser++) {
             if (usersData.get(currentUser).getUser().getUsername().compareTo(username) == 0) {
@@ -1528,8 +1793,15 @@ public final class Main {
         return result;
     }
 
-    public static ObjectNode getDefaultObjectNodeParameters(ObjectMapper objectMapper,
-                                                            Command currentCommand) {
+    /***
+     *
+     * @param objectMapper object used to convert data to JSON format
+     * @param currentCommand current command used
+     * @return an object node that contains 3 fields used in most of the results that we print in
+     * the output
+     */
+    public static ObjectNode getDefaultObjectNodeParameters(final ObjectMapper objectMapper,
+                                                            final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());
@@ -1537,8 +1809,14 @@ public final class Main {
         return objectNode;
     }
 
+    /***
+     *
+     * @param allPlaylists all existing playlists
+     * @param username username of a user
+     * @return a list of playlists that a user can find
+     */
     public static ArrayList<Playlist> getSearchablePlaylistForUser(
-            ArrayList<Playlist> allPlaylists, String username) {
+            final ArrayList<Playlist> allPlaylists, final String username) {
         ArrayList<Playlist> searchablePlaylists = new ArrayList<>();
         for (Playlist currentPlaylist : allPlaylists) {
             if (currentPlaylist.isVisibility() || currentPlaylist.getOwner().compareTo(username)
@@ -1549,8 +1827,15 @@ public final class Main {
         return searchablePlaylists;
     }
 
-    public static void updatePodcast(Command currentCommand, Command previousCommand,
-                                     UserApp userApp, LibraryInput library) {
+    /***
+     *
+     * @param currentCommand current command used
+     * @param previousCommand command prior to the current one used
+     * @param userApp object used to store all the data concerning a user
+     * @param library library containing data for all songs, podcasts and users
+     */
+    public static void updatePodcast(final Command currentCommand, final Command previousCommand,
+                                     final UserApp userApp, final LibraryInput library) {
         int updatePosition = currentCommand.getTimestamp() - previousCommand.getTimestamp();
         userApp.getLastPodcastSelected().setCurrentPositionOfPodcast(new AtomicInteger(userApp.
                 getLastPodcastSelected().getCurrentPositionOfPodcast().get() + updatePosition));
@@ -1586,8 +1871,17 @@ public final class Main {
         }
     }
 
-    public static void updatePlaylist(Command currentCommand, Command previousCommand,
-                                      UserApp userApp, ArrayList<Playlist> searchablePlaylists) {
+    /***
+     *
+     * @param currentCommand current command used
+     * @param previousCommand command prior to the current one used
+     * @param userApp object used to store all the data concerning a user
+     * @param searchablePlaylists a list of playlists that can be found by a user (public
+     *                            playlists or said user's own playlists)
+     */
+    public static void updatePlaylist(final Command currentCommand, final Command previousCommand,
+                                      final UserApp userApp,
+                                      final ArrayList<Playlist> searchablePlaylists) {
         int updatePosition = currentCommand.getTimestamp() - previousCommand.getTimestamp();
         userApp.getLastPlaylistSelected().setCurrentPositionInPlaylist(new AtomicInteger(userApp.
                 getLastPlaylistSelected().getCurrentPositionInPlaylist().get() + updatePosition));
@@ -1682,7 +1976,12 @@ public final class Main {
         }
     }
 
-    public static void updateSongByRepeatState(UserApp userApp, LibraryInput library) {
+    /***
+     *
+     * @param userApp object used to store all the data concerning a user
+     * @param library library containing data for all songs, podcasts and users
+     */
+    public static void updateSongByRepeatState(final UserApp userApp, final LibraryInput library) {
 
         int found = -1;
         for (int currentSong = 0; currentSong < library.getSongs().size(); currentSong++) {
@@ -1719,10 +2018,15 @@ public final class Main {
                     userApp.setCurrentRemainedTime(userApp.getLastLoadedSource().getDuration());
                 }
             }
+            default -> { }
         }
     }
 
-    public static void sourceReset(UserApp userApp) {
+    /***
+     *
+     * @param userApp object used to store all the data concerning a user
+     */
+    public static void sourceReset(final UserApp userApp) {
         userApp.getStatus().setName("");
         userApp.getStatus().setRemainedTime(0);
         userApp.getStatus().setPaused(true);
