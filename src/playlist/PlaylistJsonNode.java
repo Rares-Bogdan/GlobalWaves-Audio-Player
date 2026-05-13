@@ -1,7 +1,5 @@
 package playlist;
 
-import fileio.input.SongInput;
-
 import java.util.ArrayList;
 
 public class PlaylistJsonNode {

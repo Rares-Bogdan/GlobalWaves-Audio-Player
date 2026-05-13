@@ -1,4 +1,5 @@
 package playlist;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fileio.input.SongInput;
 
