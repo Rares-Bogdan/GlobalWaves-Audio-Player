@@ -7,7 +7,6 @@ import command.Command;
 import messages.ShuffleMessage;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Shuffle extends ShuffleMessage {
     private int seed;

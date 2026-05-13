@@ -33,7 +33,7 @@ public class Repeat extends RepeatMessage {
      *
      * @param repeatState sets the current repeat state of the source
      */
-    public void setRepeatState(String repeatState) {
+    public void setRepeatState(final String repeatState) {
         this.repeatState = repeatState;
     }
 
@@ -60,7 +60,8 @@ public class Repeat extends RepeatMessage {
             objectNode.put(CheckerConstants.MESSAGE_FIELD,
                     loadSourceBeforeChangeRepeatStatusMessage());
         } else {
-            objectNode.put(CheckerConstants.MESSAGE_FIELD, repeatModeChangedMessage(getRepeatState()));
+            objectNode.put(CheckerConstants.MESSAGE_FIELD, repeatModeChangedMessage(
+                    getRepeatState()));
         }
         return objectNode;
     }
