@@ -10,11 +10,23 @@ import static messages.ForwardMessage.noLoadedSourceToForwardMessage;
 
 public class Forward extends Skip {
 
-    public Forward(boolean isLoadedSourcePodcast, boolean hasLoadedSource) {
+    /***
+     *
+     * @param isLoadedSourcePodcast checks if the loaded source is a podcast
+     * @param hasLoadedSource checks if the user has a loaded source he can use forward on
+     */
+    public Forward(final boolean isLoadedSourcePodcast, final boolean hasLoadedSource) {
         super(isLoadedSourcePodcast, hasLoadedSource);
     }
 
-    public ObjectNode forwardResult(ObjectMapper objectMapper, Command currentCommand) {
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @return an object node that prints the result message of the forward command
+     */
+    public ObjectNode forwardResult(final ObjectMapper objectMapper,
+                                    final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

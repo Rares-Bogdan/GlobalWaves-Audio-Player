@@ -10,11 +10,23 @@ import static messages.BackwardMessage.noLoadedSourceToBackwardMessage;
 
 public class Backward extends Skip {
 
-    public Backward(boolean isLoadedSourcePodcast, boolean hasLoadedSource) {
+    /***
+     *
+     * @param isLoadedSourcePodcast checks if the loaded source is a podcast
+     * @param hasLoadedSource checks if the user has a loaded source he can rewind
+     */
+    public Backward(final boolean isLoadedSourcePodcast, final boolean hasLoadedSource) {
         super(isLoadedSourcePodcast, hasLoadedSource);
     }
 
-    public ObjectNode backwardResult(ObjectMapper objectMapper, Command currentCommand) {
+    /***
+     *
+     * @param objectMapper object used to print output in JSON format
+     * @param currentCommand current command used
+     * @return an object node that prints the result message of the backward command
+     */
+    public ObjectNode backwardResult(final ObjectMapper objectMapper,
+                                     final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

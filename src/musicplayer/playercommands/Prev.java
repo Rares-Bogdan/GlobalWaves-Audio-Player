@@ -10,21 +10,33 @@ public class Prev extends PrevMessage {
     private int secondsPassed;
     private boolean hasLoadedSource;
 
-    public Prev(int secondsPassed, boolean hasLoadedSource) {
+    /***
+     *
+     * @param secondsPassed how many seconds passed since the start of the source
+     * @param hasLoadedSource checks if the user has a loaded source he can use prev on
+     */
+    public Prev(final int secondsPassed, final boolean hasLoadedSource) {
         this.secondsPassed = secondsPassed;
         this.hasLoadedSource = hasLoadedSource;
     }
 
-    public int getSecondsPassed() {
-        return secondsPassed;
-    }
-
+    /***
+     *
+     * @return true if the user has a loaded source he can use prev on or false otherwise
+     */
     public boolean isHasLoadedSource() {
         return hasLoadedSource;
     }
 
-    public ObjectNode prevResult(ObjectMapper objectMapper, Command currentCommand,
-                                 String prevTrack) {
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @param prevTrack the name of the previous track
+     * @return an object node that stores the result message for the prev command
+     */
+    public ObjectNode prevResult(final ObjectMapper objectMapper, final Command currentCommand,
+                                 final String prevTrack) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

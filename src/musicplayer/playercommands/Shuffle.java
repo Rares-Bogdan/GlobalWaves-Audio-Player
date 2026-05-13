@@ -16,8 +16,17 @@ public class Shuffle extends ShuffleMessage {
     private boolean isLoadedSourcePlaylist;
     private boolean hasLoadedSource;
 
-    public Shuffle(int seed, ArrayList<Integer> songsIndexes, boolean shuffleState,
-                   boolean isLoadedSourcePlaylist, boolean hasLoadedSource) {
+    /***
+     *
+     * @param seed number used for the random shuffling of the audio sources in a playlist
+     * @param songsIndexes indexes for the songs in the playlist
+     * @param shuffleState current state of the shuffling of a playlist
+     * @param isLoadedSourcePlaylist checks if the loaded source is a playlist
+     * @param hasLoadedSource checks if the user has a loaded source
+     */
+    public Shuffle(final int seed, final ArrayList<Integer> songsIndexes,
+                   final boolean shuffleState,
+                   final boolean isLoadedSourcePlaylist, final boolean hasLoadedSource) {
         this.seed = seed;
         this.songsIndexes = songsIndexes;
         this.shuffleState = shuffleState;
@@ -25,35 +34,38 @@ public class Shuffle extends ShuffleMessage {
         this.hasLoadedSource = hasLoadedSource;
     }
 
-    public int getSeed() {
-        return seed;
-    }
-
-    public ArrayList<Integer> getSongsIndexes() {
-        return songsIndexes;
-    }
-
-    public void setSongsIndexes(ArrayList<Integer> songsIndexes) {
-        this.songsIndexes = songsIndexes;
-    }
-
+    /***
+     *
+     * @return true if a playlist is shuffled or false otherwise
+     */
     public boolean getShuffleState() {
         return shuffleState;
     }
 
-    public void setShuffleState(boolean shuffleState) {
-        this.shuffleState = shuffleState;
-    }
-
+    /***
+     *
+     * @return true if the loaded source is a playlist or false otherwise
+     */
     public boolean isLoadedSourcePlaylist() {
         return isLoadedSourcePlaylist;
     }
 
+    /***
+     *
+     * @return true of a source is loaded or false otherwise
+     */
     public boolean isHasLoadedSource() {
         return hasLoadedSource;
     }
 
-    public ObjectNode shuffleResult(ObjectMapper objectMapper, Command currentCommand) {
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @return an object node that stores the result message for the shuffle command
+     */
+    public ObjectNode shuffleResult(final ObjectMapper objectMapper,
+                                    final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

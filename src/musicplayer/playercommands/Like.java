@@ -16,47 +16,65 @@ public class Like extends LikedMessage {
     private AtomicBoolean likedOrUnliked;
     private SongInput songInput;
 
-    public Like(AtomicBoolean loadedSource, AtomicBoolean selectedSong,
-                AtomicBoolean likedOrUnliked, SongInput songInput) {
+    /***
+     *
+     * @param loadedSource checks if the user has a loaded source he can like or unlike
+     * @param selectedSong checks if the user's loaded source is a song
+     * @param likedOrUnliked current state of the feedback on the current loaded source
+     * @param songInput current song data
+     */
+    public Like(final AtomicBoolean loadedSource, final AtomicBoolean selectedSong,
+                final AtomicBoolean likedOrUnliked, final SongInput songInput) {
         this.loadedSource = loadedSource;
         this.selectedSong = selectedSong;
         this.likedOrUnliked = likedOrUnliked;
         this.songInput = songInput;
     }
 
+    /***
+     *
+     * @return an atomic boolean with true value if the user has a loaded source or one with false
+     * value otherwise
+     */
     public AtomicBoolean getLoadedSource() {
         return loadedSource;
     }
 
-    public void setLoadedSource(AtomicBoolean loadedSource) {
-        this.loadedSource = loadedSource;
-    }
-
-    public AtomicBoolean getSelectedSong() {
-        return selectedSong;
-    }
-
-    public void setSelectedSong(AtomicBoolean selectedSong) {
-        this.selectedSong = selectedSong;
-    }
-
+    /***
+     *
+     * @return an atomic boolean with true value if the song has been liked or one with false value
+     * otherwise
+     */
     public AtomicBoolean getLikedOrUnliked() {
         return likedOrUnliked;
     }
 
-    public void setLikedOrUnliked(AtomicBoolean likedOrUnliked) {
+    /***
+     *
+     * @param likedOrUnliked sets the current state of the feedback on the current loaded song for
+     *                       a user
+     */
+    public void setLikedOrUnliked(final AtomicBoolean likedOrUnliked) {
         this.likedOrUnliked = likedOrUnliked;
     }
 
+    /***
+     *
+     * @return the current song loaded data
+     */
     public SongInput getSongInput() {
         return songInput;
     }
 
-    public void setSongInput(SongInput songInput) {
-        this.songInput = songInput;
-    }
-
-    public ObjectNode likedResult(ObjectMapper objectMapper, Command currentCommand, Playlist playlist) {
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @param playlist a list of the liked songs by a user
+     * @return an object node that stores the result message of the like command
+     */
+    public ObjectNode likedResult(final ObjectMapper objectMapper, final Command currentCommand,
+                                  final Playlist playlist) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

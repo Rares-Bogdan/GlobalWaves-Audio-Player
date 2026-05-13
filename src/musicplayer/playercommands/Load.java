@@ -6,6 +6,13 @@ import command.Command;
 import musicplayer.MusicPlayer;
 
 public interface Load {
-    public ObjectNode loadResult(ObjectMapper objectMapper, Command currentCommand,
-                                 MusicPlayer musicPlayer);
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @param musicPlayer play / pause state of the music player
+     * @return an object node that stores the result message for the load command
+     */
+    ObjectNode loadResult(ObjectMapper objectMapper, Command currentCommand,
+                          MusicPlayer musicPlayer);
 }
