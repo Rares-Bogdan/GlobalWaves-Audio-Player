@@ -15,6 +15,9 @@ public class LastPlaylistSelected {
     private AtomicBoolean hasRepeatCurrentSongState;
     private AtomicInteger currentSongToBeRepeatedIndex;
 
+    /***
+     * default constructor for the last playlist selected by the user
+     */
     public LastPlaylistSelected() {
         this.songIndex = new AtomicInteger(-1);
         this.currentPositionInPlaylist = new AtomicInteger(-1);
@@ -27,75 +30,153 @@ public class LastPlaylistSelected {
         this.currentSongToBeRepeatedIndex = new AtomicInteger(-1);
     }
 
+    /***
+     *
+     * @return the current song the playlist is positioned to
+     */
     public AtomicInteger getSongIndex() {
         return songIndex;
     }
 
-    public void setSongIndex(AtomicInteger songIndex) {
+    /***
+     *
+     * @param songIndex sets the song index for the playlist
+     */
+    public void setSongIndex(final AtomicInteger songIndex) {
         this.songIndex = songIndex;
     }
 
+    /***
+     *
+     * @return the current position in the playlist, relative to the total time of the playlist
+     */
     public AtomicInteger getCurrentPositionInPlaylist() {
         return currentPositionInPlaylist;
     }
 
-    public void setCurrentPositionInPlaylist(AtomicInteger currentPositionInPlaylist) {
+    /***
+     *
+     * @param currentPositionInPlaylist sets the current position in playlist, relative to the
+     *                                  total time of the playlist
+     */
+    public void setCurrentPositionInPlaylist(final AtomicInteger currentPositionInPlaylist) {
         this.currentPositionInPlaylist = currentPositionInPlaylist;
     }
 
+    /***
+     *
+     * @return the total time of the playlist
+     */
     public int getTotalDurationOfPlaylist() {
         return totalDurationOfPlaylist;
     }
 
-    public void setTotalDurationOfPlaylist(int totalDurationOfPlaylist) {
+    /***
+     *
+     * @param totalDurationOfPlaylist sets the total time of the playlist
+     */
+    public void setTotalDurationOfPlaylist(final int totalDurationOfPlaylist) {
         this.totalDurationOfPlaylist = totalDurationOfPlaylist;
     }
 
+    /***
+     *
+     * @return total number of songs in the last playlist selected by a user
+     */
     public int getTotalNumberOfSongsInPlaylist() {
         return totalNumberOfSongsInPlaylist;
     }
 
-    public void setTotalNumberOfSongsInPlaylist(int totalNumberOfSongsInPlaylist) {
+    /***
+     *
+     * @param totalNumberOfSongsInPlaylist sets the total number of songs in the last playlist
+     *                                     selected by a user
+     */
+    public void setTotalNumberOfSongsInPlaylist(final int totalNumberOfSongsInPlaylist) {
         this.totalNumberOfSongsInPlaylist = totalNumberOfSongsInPlaylist;
     }
 
+    /***
+     *
+     * @return the start position of every song in the last playlist selected by a user
+     */
     public ArrayList<Integer> getSongsStartsPositions() {
         return songsStartsPositions;
     }
 
-    public void setSongsStartsPositions(ArrayList<Integer> songsStartsPositions) {
+    /***
+     *
+     * @param songsStartsPositions sets the start position of every song in the last playlist
+     *                             selected by a user
+     */
+    public void setSongsStartsPositions(final ArrayList<Integer> songsStartsPositions) {
         this.songsStartsPositions = songsStartsPositions;
     }
 
+    /***
+     *
+     * @return the name of the current song the playlist is positioned at
+     */
     public String getCurrentSongName() {
         return currentSongName;
     }
 
-    public void setCurrentSongName(String currentSongName) {
+    /***
+     *
+     * @param currentSongName sets currentSongName for the last playlist selected by a user
+     */
+    public void setCurrentSongName(final String currentSongName) {
         this.currentSongName = currentSongName;
     }
 
+    /***
+     *
+     * @return the name of the last playlist selected by a user
+     */
     public String getPlaylistName() {
         return playlistName;
     }
 
-    public void setPlaylistName(String playlistName) {
+    /***
+     *
+     * @param playlistName sets the name of the last playlist selected by a user
+     */
+    public void setPlaylistName(final String playlistName) {
         this.playlistName = playlistName;
     }
 
+    /***
+     *
+     * @return an atomic boolean that checks if the playlist has the repeat once state for the
+     * current song
+     */
     public AtomicBoolean getHasRepeatCurrentSongState() {
         return hasRepeatCurrentSongState;
     }
 
-    public void setHasRepeatCurrentSongState(AtomicBoolean hasRepeatCurrentSongState) {
+    /***
+     *
+     * @param hasRepeatCurrentSongState sets hasRepeatCurrentSongState for the last playlist
+     *                                  selected by a user
+     */
+    public void setHasRepeatCurrentSongState(final AtomicBoolean hasRepeatCurrentSongState) {
         this.hasRepeatCurrentSongState = hasRepeatCurrentSongState;
     }
 
+    /***
+     *
+     * @return the index for the song that has repeat once status
+     */
     public AtomicInteger getCurrentSongToBeRepeatedIndex() {
         return currentSongToBeRepeatedIndex;
     }
 
-    public void setCurrentSongToBeRepeatedIndex(AtomicInteger currentSongToBeRepeatedIndex) {
+    /***
+     *
+     * @param currentSongToBeRepeatedIndex sets currentSongToBeRepeatedIndex for the last playlist
+     *                                     selected by a user
+     */
+    public void setCurrentSongToBeRepeatedIndex(final AtomicInteger currentSongToBeRepeatedIndex) {
         this.currentSongToBeRepeatedIndex = currentSongToBeRepeatedIndex;
     }
 }

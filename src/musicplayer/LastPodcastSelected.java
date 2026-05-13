@@ -1,9 +1,5 @@
 package musicplayer;
-
-import fileio.input.PodcastInput;
-
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LastPodcastSelected {
@@ -14,8 +10,10 @@ public class LastPodcastSelected {
     private ArrayList<Integer> episodesStartsPositions;
     private String currentEpisodeName;
     private String podcastName;
-    private AtomicBoolean hasRepeatOnceState;
 
+    /***
+     * default constructor for last podcast selected by a user
+     */
     public LastPodcastSelected() {
         this.episodeIndex = new AtomicInteger(-1);
         this.currentPositionOfPodcast = new AtomicInteger(-1);
@@ -24,70 +22,120 @@ public class LastPodcastSelected {
         this.episodesStartsPositions = new ArrayList<Integer>();
         this.currentEpisodeName = "";
         this.podcastName = "";
-        this.hasRepeatOnceState = new AtomicBoolean(false);
     }
 
+    /***
+     *
+     * @return the current episode the podcast is positioned to
+     */
     public AtomicInteger getEpisodeIndex() {
         return episodeIndex;
     }
 
-    public void setEpisodeIndex(AtomicInteger episodeIndex) {
+    /***
+     *
+     * @param episodeIndex sets the episodeIndex for the last podcast selected by a user
+     */
+    public void setEpisodeIndex(final AtomicInteger episodeIndex) {
         this.episodeIndex = episodeIndex;
     }
 
+    /***
+     *
+     * @return the current position in the podcast, relative to the total time
+     */
     public AtomicInteger getCurrentPositionOfPodcast() {
         return currentPositionOfPodcast;
     }
 
-    public void setCurrentPositionOfPodcast(AtomicInteger currentPositionOfPodcast) {
+    /***
+     *
+     * @param currentPositionOfPodcast sets the current position in the podcast, relative to the
+     *                                 total time
+     */
+    public void setCurrentPositionOfPodcast(final AtomicInteger currentPositionOfPodcast) {
         this.currentPositionOfPodcast = currentPositionOfPodcast;
     }
 
+    /***
+     *
+     * @return total time of the last podcast selected by a user
+     */
     public int getTotalDurationOfPodcast() {
         return totalDurationOfPodcast;
     }
 
-    public void setTotalDurationOfPodcast(int totalDurationOfPodcast) {
+    /***
+     *
+     * @param totalDurationOfPodcast sets the total time of the last podcast selected by a user
+     */
+    public void setTotalDurationOfPodcast(final int totalDurationOfPodcast) {
         this.totalDurationOfPodcast = totalDurationOfPodcast;
     }
 
+    /***
+     *
+     * @return total number of episodes from the last podcast selected by a user
+     */
     public int getTotalNumberOfEpisodes() {
         return totalNumberOfEpisodes;
     }
 
-    public void setTotalNumberOfEpisodes(int totalNumberOfEpisodes) {
+    /***
+     *
+     * @param totalNumberOfEpisodes sets the total number of episodes from the last podcast
+     *                              selected by a user
+     */
+    public void setTotalNumberOfEpisodes(final int totalNumberOfEpisodes) {
         this.totalNumberOfEpisodes = totalNumberOfEpisodes;
     }
 
+    /***
+     *
+     * @return the start position for each episode in the last podcast selected by a user
+     */
     public ArrayList<Integer> getEpisodesStartsPositions() {
         return episodesStartsPositions;
     }
 
-    public void setEpisodesStartsPositions(ArrayList<Integer> episodesStartsPositions) {
+    /***
+     *
+     * @param episodesStartsPositions sets the episodes start positions for the last podcast
+     *                                selected by a user
+     */
+    public void setEpisodesStartsPositions(final ArrayList<Integer> episodesStartsPositions) {
         this.episodesStartsPositions = episodesStartsPositions;
     }
 
+    /***
+     *
+     * @return the name for the current episode the podcast is positioned at
+     */
     public String getCurrentEpisodeName() {
         return currentEpisodeName;
     }
 
-    public void setCurrentEpisodeName(String currentEpisodeName) {
+    /***
+     *
+     * @param currentEpisodeName sets the name of the current episode the podcast is positioned at
+     */
+    public void setCurrentEpisodeName(final String currentEpisodeName) {
         this.currentEpisodeName = currentEpisodeName;
     }
 
+    /***
+     *
+     * @return the name for the last podcast selected by a user
+     */
     public String getPodcastName() {
         return podcastName;
     }
 
-    public void setPodcastName(String podcastName) {
+    /***
+     *
+     * @param podcastName sets the name for the last podcast selected by a user
+     */
+    public void setPodcastName(final String podcastName) {
         this.podcastName = podcastName;
-    }
-
-    public AtomicBoolean getHasRepeatOnceState() {
-        return hasRepeatOnceState;
-    }
-
-    public void setHasRepeatOnceState(AtomicBoolean hasRepeatOnceState) {
-        this.hasRepeatOnceState = hasRepeatOnceState;
     }
 }

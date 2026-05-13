@@ -477,7 +477,7 @@ public final class Main {
                                                final ArrayList<String> lastSearchResult,
                                    final AtomicInteger lastIndexSelected,
                                                final ObjectMapper objectMapper,
-                                   final Command currentCommand, ArrayNode outputs,
+                                   final Command currentCommand, final ArrayNode outputs,
                                    final AtomicBoolean selectedPodcast,
                                                final AtomicBoolean selectedPlaylist,
                                    final AtomicBoolean noLoadedSourceAfterSearch,
@@ -668,7 +668,8 @@ public final class Main {
      * @param previousCommandTimestamp timestamp of the command prior to the current one
      */
     public static void statusCommand(final ObjectMapper objectMapper, final Command currentCommand,
-                                     final String name, final Status status, final ArrayNode outputs,
+                                     final String name, final Status status,
+                                     final ArrayNode outputs,
                                      final int currentRemainedTime, final UserApp userApp,
                                      final int previousCommandTimestamp) {
         if (currentRemainedTime <= 0 && status.getRepeat().compareTo(CheckerConstants.NO_REPEAT)
