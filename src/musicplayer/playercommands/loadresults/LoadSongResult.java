@@ -13,22 +13,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoadSongResult implements Load {
     private AtomicBoolean selectedSong;
     private String song;
-    public LoadSongResult(AtomicBoolean selectedSong, String song) {
+
+    /***
+     *
+     * @param selectedSong checks if a song was selected
+     * @param song name of the selected song
+     */
+    public LoadSongResult(final AtomicBoolean selectedSong, final String song) {
         this.selectedSong = selectedSong;
         this.song = song;
     }
 
+    /***
+     *
+     * @return an atomic boolean with true value if a song is selected or false otherwise
+     */
     public AtomicBoolean getSelectedSong() {
         return selectedSong;
     }
 
+    /***
+     *
+     * @return name of the selected song
+     */
     public String getSong() {
         return song;
     }
 
+    /***
+     *
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @param musicPlayer play / pause state of the music player
+     * @return an object node that stores the result message for load command used on a song
+     */
     @Override
-    public ObjectNode loadResult(ObjectMapper objectMapper, Command currentCommand,
-                                 MusicPlayer musicPlayer) {
+    public ObjectNode loadResult(final ObjectMapper objectMapper, final Command currentCommand,
+                                 final MusicPlayer musicPlayer) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());
