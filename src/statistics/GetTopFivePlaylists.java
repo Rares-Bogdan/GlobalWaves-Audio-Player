@@ -1,4 +1,4 @@
-package statistics.generalstatistics;
+package statistics;
 
 public class GetTopFivePlaylists {
 }
