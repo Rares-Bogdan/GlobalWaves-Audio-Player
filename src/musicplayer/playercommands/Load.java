@@ -7,7 +7,8 @@ import musicplayer.MusicPlayer;
 
 public interface Load {
     /***
-     *
+     * interface method that helps print the output for load command that will be updated in
+     * classes that implement Load
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param musicPlayer play / pause state of the music player

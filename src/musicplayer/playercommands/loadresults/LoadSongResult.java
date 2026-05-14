@@ -15,7 +15,7 @@ public class LoadSongResult implements Load {
     private String song;
 
     /***
-     *
+     * constructor for LoadSongResult class
      * @param selectedSong checks if a song was selected
      * @param song name of the selected song
      */
@@ -25,7 +25,7 @@ public class LoadSongResult implements Load {
     }
 
     /***
-     *
+     * selectedSong getter
      * @return an atomic boolean with true value if a song is selected or false otherwise
      */
     public AtomicBoolean getSelectedSong() {
@@ -33,7 +33,7 @@ public class LoadSongResult implements Load {
     }
 
     /***
-     *
+     * song name getter
      * @return name of the selected song
      */
     public String getSong() {
@@ -41,7 +41,7 @@ public class LoadSongResult implements Load {
     }
 
     /***
-     *
+     * method that helps print the output for load command used on a song
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param musicPlayer play / pause state of the music player

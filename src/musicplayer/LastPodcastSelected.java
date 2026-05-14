@@ -25,7 +25,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * episodeIndex getter
      * @return the current episode the podcast is positioned to
      */
     public AtomicInteger getEpisodeIndex() {
@@ -33,7 +33,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * episodeIndex setter
      * @param episodeIndex sets the episodeIndex for the last podcast selected by a user
      */
     public void setEpisodeIndex(final AtomicInteger episodeIndex) {
@@ -41,7 +41,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * currentPositionOfPodcast getter
      * @return the current position in the podcast, relative to the total time
      */
     public AtomicInteger getCurrentPositionOfPodcast() {
@@ -49,7 +49,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * currentPositionOfPodcast setter
      * @param currentPositionOfPodcast sets the current position in the podcast, relative to the
      *                                 total time
      */
@@ -58,7 +58,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * totalDurationOfPodcast getter
      * @return total time of the last podcast selected by a user
      */
     public int getTotalDurationOfPodcast() {
@@ -66,7 +66,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * totalDurationOfPodcast setter
      * @param totalDurationOfPodcast sets the total time of the last podcast selected by a user
      */
     public void setTotalDurationOfPodcast(final int totalDurationOfPodcast) {
@@ -74,7 +74,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * totalNumberOfEpisodes getter
      * @return total number of episodes from the last podcast selected by a user
      */
     public int getTotalNumberOfEpisodes() {
@@ -82,7 +82,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * totalNumberOfEpisodes setter
      * @param totalNumberOfEpisodes sets the total number of episodes from the last podcast
      *                              selected by a user
      */
@@ -91,7 +91,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * episodesStartsPositions getter
      * @return the start position for each episode in the last podcast selected by a user
      */
     public ArrayList<Integer> getEpisodesStartsPositions() {
@@ -99,7 +99,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * episodesStartsPositions setter
      * @param episodesStartsPositions sets the episodes start positions for the last podcast
      *                                selected by a user
      */
@@ -108,7 +108,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * currentEpisodeName getter
      * @return the name for the current episode the podcast is positioned at
      */
     public String getCurrentEpisodeName() {
@@ -116,7 +116,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * currentEpisodeName setter
      * @param currentEpisodeName sets the name of the current episode the podcast is positioned at
      */
     public void setCurrentEpisodeName(final String currentEpisodeName) {
@@ -124,7 +124,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * podcastName getter
      * @return the name for the last podcast selected by a user
      */
     public String getPodcastName() {
@@ -132,7 +132,7 @@ public class LastPodcastSelected {
     }
 
     /***
-     *
+     * podcastName setter
      * @param podcastName sets the name for the last podcast selected by a user
      */
     public void setPodcastName(final String podcastName) {

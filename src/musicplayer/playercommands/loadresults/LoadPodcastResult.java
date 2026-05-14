@@ -15,7 +15,7 @@ public class LoadPodcastResult implements Load {
     private AtomicBoolean selectedPodcast;
 
     /***
-     *
+     * constructor for LoadPodcastResult class
      * @param selectedPodcast checks if a podcast was selected
      * @param podcast name of the selected podcast
      */
@@ -25,7 +25,7 @@ public class LoadPodcastResult implements Load {
     }
 
     /***
-     *
+     * podcast name getter
      * @return name of the selected podcast
      */
     public String getPodcast() {
@@ -33,7 +33,7 @@ public class LoadPodcastResult implements Load {
     }
 
     /***
-     *
+     * selectedPodcast getter
      * @return an atomic boolean with true value if a podcast is selected or false otherwise
      */
     public AtomicBoolean getSelectedPodcast() {
@@ -41,7 +41,7 @@ public class LoadPodcastResult implements Load {
     }
 
     /***
-     *
+     * method that helps print the output for load command used on a podcast
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param musicPlayer play / pause state of the music player

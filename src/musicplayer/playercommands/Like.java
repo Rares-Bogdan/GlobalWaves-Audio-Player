@@ -17,7 +17,7 @@ public class Like extends LikedMessage {
     private SongInput songInput;
 
     /***
-     *
+     * constructor for Like class
      * @param loadedSource checks if the user has a loaded source he can like or unlike
      * @param selectedSong checks if the user's loaded source is a song
      * @param likedOrUnliked current state of the feedback on the current loaded source
@@ -32,7 +32,7 @@ public class Like extends LikedMessage {
     }
 
     /***
-     *
+     * loadedSource getter
      * @return an atomic boolean with true value if the user has a loaded source or one with false
      * value otherwise
      */
@@ -41,7 +41,7 @@ public class Like extends LikedMessage {
     }
 
     /***
-     *
+     * likedOrUnliked getter
      * @return an atomic boolean with true value if the song has been liked or one with false value
      * otherwise
      */
@@ -50,7 +50,7 @@ public class Like extends LikedMessage {
     }
 
     /***
-     *
+     * likedOrUnliked setter
      * @param likedOrUnliked sets the current state of the feedback on the current loaded song for
      *                       a user
      */
@@ -59,7 +59,7 @@ public class Like extends LikedMessage {
     }
 
     /***
-     *
+     * songInput getter
      * @return the current song loaded data
      */
     public SongInput getSongInput() {
@@ -67,7 +67,7 @@ public class Like extends LikedMessage {
     }
 
     /***
-     *
+     * method that helps print the output for like command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param playlist a list of the liked songs by a user

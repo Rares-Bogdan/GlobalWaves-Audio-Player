@@ -11,7 +11,7 @@ public class Next extends NextMessage {
     private boolean hasLoadedSource;
 
     /***
-     *
+     * constructor for Next class
      * @param isAtEnd checks if the source is at the last song / episode from the
      *                playlist / podcast
      * @param hasLoadedSource checks if the user has a loaded source
@@ -22,7 +22,7 @@ public class Next extends NextMessage {
     }
 
     /***
-     *
+     * isAtEnd getter
      * @return true if the source is at the last song / episode or false otherwise
      */
     public boolean isAtEnd() {
@@ -30,7 +30,7 @@ public class Next extends NextMessage {
     }
 
     /***
-     *
+     * hasLoadedSource getter
      * @return true if the user has a loaded source he can use next on or false otherwise
      */
     public boolean isHasLoadedSource() {
@@ -38,7 +38,7 @@ public class Next extends NextMessage {
     }
 
     /***
-     *
+     * method that helps print the output for next command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param nextTrack name of the next track

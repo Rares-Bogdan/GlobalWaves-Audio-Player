@@ -16,7 +16,7 @@ public class Shuffle extends ShuffleMessage {
     private boolean hasLoadedSource;
 
     /***
-     *
+     * constructor for Shuffle class
      * @param seed number used for the random shuffling of the audio sources in a playlist
      * @param songsIndexes indexes for the songs in the playlist
      * @param shuffleState current state of the shuffling of a playlist
@@ -34,7 +34,7 @@ public class Shuffle extends ShuffleMessage {
     }
 
     /***
-     *
+     * shuffleState getter
      * @return true if a playlist is shuffled or false otherwise
      */
     public boolean getShuffleState() {
@@ -42,7 +42,7 @@ public class Shuffle extends ShuffleMessage {
     }
 
     /***
-     *
+     * isLoadedSourcePlaylist getter
      * @return true if the loaded source is a playlist or false otherwise
      */
     public boolean isLoadedSourcePlaylist() {
@@ -50,7 +50,7 @@ public class Shuffle extends ShuffleMessage {
     }
 
     /***
-     *
+     * hasLoadedSource getter
      * @return true of a source is loaded or false otherwise
      */
     public boolean isHasLoadedSource() {
@@ -58,7 +58,7 @@ public class Shuffle extends ShuffleMessage {
     }
 
     /***
-     *
+     * method that helps print the output for shuffle command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @return an object node that stores the result message for the shuffle command

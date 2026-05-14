@@ -31,7 +31,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * songIndex getter
      * @return the current song the playlist is positioned to
      */
     public AtomicInteger getSongIndex() {
@@ -39,7 +39,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * songIndex setter
      * @param songIndex sets the song index for the playlist
      */
     public void setSongIndex(final AtomicInteger songIndex) {
@@ -47,7 +47,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentPositionInPlaylist getter
      * @return the current position in the playlist, relative to the total time of the playlist
      */
     public AtomicInteger getCurrentPositionInPlaylist() {
@@ -55,7 +55,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentPositionInPlaylist setter
      * @param currentPositionInPlaylist sets the current position in playlist, relative to the
      *                                  total time of the playlist
      */
@@ -64,7 +64,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * totalDurationOfPlaylist getter
      * @return the total time of the playlist
      */
     public int getTotalDurationOfPlaylist() {
@@ -72,7 +72,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * totalDurationOfPlaylist setter
      * @param totalDurationOfPlaylist sets the total time of the playlist
      */
     public void setTotalDurationOfPlaylist(final int totalDurationOfPlaylist) {
@@ -80,7 +80,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * totalNumberOfSongsInPlaylist getter
      * @return total number of songs in the last playlist selected by a user
      */
     public int getTotalNumberOfSongsInPlaylist() {
@@ -88,7 +88,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * totalNumberOfSongsInPlaylist setter
      * @param totalNumberOfSongsInPlaylist sets the total number of songs in the last playlist
      *                                     selected by a user
      */
@@ -97,7 +97,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * getSongsStartsPositions getter
      * @return the start position of every song in the last playlist selected by a user
      */
     public ArrayList<Integer> getSongsStartsPositions() {
@@ -105,7 +105,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * getSongsStartsPositions setter
      * @param songsStartsPositions sets the start position of every song in the last playlist
      *                             selected by a user
      */
@@ -114,7 +114,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentSongName getter
      * @return the name of the current song the playlist is positioned at
      */
     public String getCurrentSongName() {
@@ -122,7 +122,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentSongName setter
      * @param currentSongName sets currentSongName for the last playlist selected by a user
      */
     public void setCurrentSongName(final String currentSongName) {
@@ -130,7 +130,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * playlistName getter
      * @return the name of the last playlist selected by a user
      */
     public String getPlaylistName() {
@@ -138,7 +138,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * playlistName setter
      * @param playlistName sets the name of the last playlist selected by a user
      */
     public void setPlaylistName(final String playlistName) {
@@ -146,7 +146,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * hasRepeatCurrentSongState getter
      * @return an atomic boolean that checks if the playlist has the repeat once state for the
      * current song
      */
@@ -155,7 +155,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * hasRepeatCurrentSongState setter
      * @param hasRepeatCurrentSongState sets hasRepeatCurrentSongState for the last playlist
      *                                  selected by a user
      */
@@ -164,7 +164,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentSongToBeRepeatedIndex getter
      * @return the index for the song that has repeat once status
      */
     public AtomicInteger getCurrentSongToBeRepeatedIndex() {
@@ -172,7 +172,7 @@ public class LastPlaylistSelected {
     }
 
     /***
-     *
+     * currentSongToBeRepeatedIndex setter
      * @param currentSongToBeRepeatedIndex sets currentSongToBeRepeatedIndex for the last playlist
      *                                     selected by a user
      */

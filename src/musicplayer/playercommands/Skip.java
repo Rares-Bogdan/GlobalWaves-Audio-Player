@@ -7,7 +7,7 @@ public abstract class Skip extends SkipMessage {
     private boolean hasLoadedSource;
 
     /***
-     *
+     * constructor for Skip class
      * @param isLoadedSourcePodcast checks if the loaded source is a podcast
      * @param hasLoadedSource checks if the user has a loaded source
      */
@@ -17,7 +17,7 @@ public abstract class Skip extends SkipMessage {
     }
 
     /***
-     *
+     * isLoadedSourcePodcast getter
      * @return true if the loaded source is a podcast or false otherwise
      */
     public boolean isLoadedSourcePodcast() {
@@ -25,7 +25,7 @@ public abstract class Skip extends SkipMessage {
     }
 
     /***
-     *
+     * hasLoadedSource getter
      * @return true if the user has a loaded source or false otherwise
      */
     public boolean isHasLoadedSource() {

@@ -11,7 +11,7 @@ public class Repeat extends RepeatMessage {
     private boolean hasLoadedSource;
 
     /***
-     *
+     * constructor for Repeat class
      * @param repeatState current repeat state of the source
      *                    constructor will initialize with no repeat
      * @param hasLoadedSource checks if the user has a source he can use repeat on
@@ -22,7 +22,7 @@ public class Repeat extends RepeatMessage {
     }
 
     /***
-     *
+     * repeatState getter
      * @return current repeat state of the source
      */
     public String getRepeatState() {
@@ -30,7 +30,7 @@ public class Repeat extends RepeatMessage {
     }
 
     /***
-     *
+     * repeatState setter
      * @param repeatState sets the current repeat state of the source
      */
     public void setRepeatState(final String repeatState) {
@@ -38,7 +38,7 @@ public class Repeat extends RepeatMessage {
     }
 
     /***
-     *
+     * hasLoadedSource getter
      * @return true if the user has a loaded source or false otherwise
      */
     public boolean hasLoadedSource() {
@@ -46,7 +46,7 @@ public class Repeat extends RepeatMessage {
     }
 
     /***
-     *
+     * method that helps print the output for repeat command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @return an object node that stores the result message for the repeat command

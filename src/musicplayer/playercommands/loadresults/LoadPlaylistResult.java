@@ -15,7 +15,7 @@ public class LoadPlaylistResult implements Load {
     private AtomicBoolean selectedPlaylist;
 
     /***
-     *
+     * constructor for LoadPlaylistResult class
      * @param playlist name of the selected playlist
      * @param selectedPlaylist checks if a playlist was selected
      */
@@ -25,7 +25,7 @@ public class LoadPlaylistResult implements Load {
     }
 
     /***
-     *
+     * playlist name getter
      * @return name of the selected playlist
      */
     public String getPlaylist() {
@@ -33,7 +33,7 @@ public class LoadPlaylistResult implements Load {
     }
 
     /***
-     *
+     * selectedPlaylist getter
      * @return an atomic boolean with true value if a playlist was selected or false otherwise
      */
     public AtomicBoolean getSelectedPlaylist() {
@@ -41,7 +41,7 @@ public class LoadPlaylistResult implements Load {
     }
 
     /***
-     *
+     * method that helps print the output for load command used on a playlist
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param musicPlayer play / pause state of the music player

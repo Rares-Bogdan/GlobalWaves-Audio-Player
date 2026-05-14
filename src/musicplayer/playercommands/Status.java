@@ -14,7 +14,7 @@ public class Status {
     private boolean paused;
 
     /***
-     *
+     * constructor for Status class
      * @param name current played / paused source name
      * @param remainedTime current played / paused source remained time until the end
      * @param repeat repeat state for the current played / paused source
@@ -42,7 +42,7 @@ public class Status {
     }
 
     /***
-     *
+     * name getter
      * @return current played / paused source name
      */
     public String getName() {
@@ -50,7 +50,7 @@ public class Status {
     }
 
     /***
-     *
+     * name setter
      * @param name sets the current played / paused source name
      */
     public void setName(final String name) {
@@ -58,7 +58,7 @@ public class Status {
     }
 
     /***
-     *
+     * remainedTime getter
      * @return current played / paused source remained time until the end
      */
     public int getRemainedTime() {
@@ -66,7 +66,7 @@ public class Status {
     }
 
     /***
-     *
+     * remainedTime setter
      * @param remainedTime sets the current played / paused source remained time until the end
      */
     public void setRemainedTime(final int remainedTime) {
@@ -74,7 +74,7 @@ public class Status {
     }
 
     /***
-     *
+     * repeat getter
      * @return repeat state for the current played / paused source
      */
     public String getRepeat() {
@@ -82,7 +82,7 @@ public class Status {
     }
 
     /***
-     *
+     * repeat setter
      * @param repeat sets the repeat state for the current played / paused source
      */
     public void setRepeat(final String repeat) {
@@ -90,7 +90,7 @@ public class Status {
     }
 
     /***
-     *
+     * shuffle getter
      * @return true if the current source is shuffled or false otherwise
      */
     public boolean isShuffle() {
@@ -98,7 +98,7 @@ public class Status {
     }
 
     /***
-     *
+     * shuffle setter
      * @param shuffle sets the shuffle state for the current played / paused source
      */
     public void setShuffle(final boolean shuffle) {
@@ -106,7 +106,7 @@ public class Status {
     }
 
     /***
-     *
+     * paused getter
      * @return true if the current source is paused or false otherwise
      */
     public boolean isPaused() {
@@ -114,7 +114,7 @@ public class Status {
     }
 
     /***
-     *
+     * paused setter
      * @param paused sets the play / pause state for the current source
      */
     public void setPaused(final boolean paused) {
@@ -122,7 +122,7 @@ public class Status {
     }
 
     /***
-     *
+     * method that helps print the output for status command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @return an object node that stores the result message for status command

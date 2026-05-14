@@ -13,7 +13,7 @@ public class MusicPlayer extends PlayPauseMessage {
     private boolean playPause;
 
     /***
-     *
+     * constructor for MusicPlayer class
      * @param playPause play state of the music player
      */
     public MusicPlayer(final boolean playPause) {
@@ -21,7 +21,7 @@ public class MusicPlayer extends PlayPauseMessage {
     }
 
     /***
-     *
+     * playPause getter
      * @return the play state of the music player
      */
     public boolean isPlayPause() {
@@ -29,7 +29,7 @@ public class MusicPlayer extends PlayPauseMessage {
     }
 
     /***
-     *
+     * playPause setter
      * @param playPause sets the play state of the music player
      */
     public void setPlayPause(final boolean playPause) {
@@ -37,7 +37,7 @@ public class MusicPlayer extends PlayPauseMessage {
     }
 
     /***
-     *
+     * method that helps print the output for playPause command
      * @param objectMapper object used to print output in JSON format
      * @param currentCommand current command used
      * @param loadedSource checks if there exists a loaded source to be played or paused

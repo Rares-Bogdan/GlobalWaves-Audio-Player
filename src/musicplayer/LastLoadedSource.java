@@ -8,7 +8,7 @@ public class LastLoadedSource {
     private AtomicBoolean hasRepeatOnceState;
 
     /***
-     *
+     * constructor for LastLoadedSource class
      * @param name the name of the source
      * @param duration current duration of the source
      * @param hasRepeatOnceState checks if the source is set to be repeated once
@@ -30,7 +30,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * name getter
      * @return source name
      */
     public String getName() {
@@ -38,7 +38,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * name setter
      * @param name sets the source name
      */
     public void setName(final String name) {
@@ -46,7 +46,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * duration getter
      * @return source current duration
      */
     public int getDuration() {
@@ -54,7 +54,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * duration setter
      * @param duration sets the source current duration
      */
     public void setDuration(final int duration) {
@@ -62,7 +62,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * hasRepeatOnceState getter
      * @return an atomic boolean that checks if the source is set to be repeated once
      */
     public AtomicBoolean getHasRepeatOnceState() {
@@ -70,7 +70,7 @@ public class LastLoadedSource {
     }
 
     /***
-     *
+     * hasRepeatOnceState setter
      * @param hasRepeatOnceState sets hasRepeatOnceState for the source
      */
     public void setHasRepeatOnceState(final AtomicBoolean hasRepeatOnceState) {

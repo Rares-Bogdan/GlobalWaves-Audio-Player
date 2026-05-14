@@ -11,7 +11,7 @@ public class Prev extends PrevMessage {
     private boolean hasLoadedSource;
 
     /***
-     *
+     * constructor for Prev class
      * @param secondsPassed how many seconds passed since the start of the source
      * @param hasLoadedSource checks if the user has a loaded source he can use prev on
      */
@@ -21,7 +21,7 @@ public class Prev extends PrevMessage {
     }
 
     /***
-     *
+     * hasLoadedSource getter
      * @return true if the user has a loaded source he can use prev on or false otherwise
      */
     public boolean isHasLoadedSource() {
@@ -29,7 +29,7 @@ public class Prev extends PrevMessage {
     }
 
     /***
-     *
+     * method that helps print the output for prev command
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @param prevTrack the name of the previous track
