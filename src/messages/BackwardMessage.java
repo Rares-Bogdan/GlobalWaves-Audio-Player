@@ -4,10 +4,13 @@ import checker.CheckerConstants;
 
 public final class BackwardMessage extends SkipMessage {
 
+    /***
+     * private constructor for BackwardMessage class
+     */
     private BackwardMessage() { }
 
     /***
-     *
+     * method that prints the successful rewind message
      * @return a message that shows a source has been rewound successfully
      */
     public static String backwardSkipSuccessMessage() {
@@ -15,7 +18,7 @@ public final class BackwardMessage extends SkipMessage {
     }
 
     /***
-     *
+     * method that prints the requirement to load a source in order to rewind message
      * @return a message that asks the user to load a source before attempting to rewind
      */
     public static String noLoadedSourceToBackwardMessage() {

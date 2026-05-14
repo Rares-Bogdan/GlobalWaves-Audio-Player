@@ -6,7 +6,7 @@ public final class AddRemoveInPlaylistMessage {
     private AddRemoveInPlaylistMessage() { }
 
     /***
-     *
+     * method that prints the successfully added to playlist message
      * @return a message that shows a song has been successfully added in a playlist
      */
     public static String successfullyAddedToPlaylistMessage() {
@@ -14,7 +14,7 @@ public final class AddRemoveInPlaylistMessage {
     }
 
     /***
-     *
+     * method that prints the successfully removed from the playlist message
      * @return a message that shows a song has been successfully removed from a playlist
      */
     public static String successfullyRemovedFromPlaylistMessage() {
@@ -22,7 +22,7 @@ public final class AddRemoveInPlaylistMessage {
     }
 
     /***
-     *
+     * method that prints the loaded source is not a song message
      * @return a message that show the loaded source is not a song
      */
     public static String loadedSourceNotSongMessage() {
@@ -30,6 +30,7 @@ public final class AddRemoveInPlaylistMessage {
     }
 
     /***
+     * method that prints the playlist does not exist message
      * @return a message that shows the playlist does not exist
      */
     public static String playlistNotExistMessage() {
@@ -37,7 +38,7 @@ public final class AddRemoveInPlaylistMessage {
     }
 
     /***
-     *
+     * method that prints the requirement to load a source before other operations message
      * @return a message that asks the user to load a source before trying to add or remove a
      * source
      */

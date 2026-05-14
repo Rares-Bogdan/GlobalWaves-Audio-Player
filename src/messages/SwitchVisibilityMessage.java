@@ -4,7 +4,7 @@ import checker.CheckerConstants;
 
 public class SwitchVisibilityMessage {
     /***
-     *
+     * method that prints the successful update of the visibility status
      * @param visibilityStatus the state of visibility the user switches the source to
      * @return a message that shows the visibility status was updated successfully
      */
@@ -19,7 +19,7 @@ public class SwitchVisibilityMessage {
     }
 
     /***
-     *
+     * method that prints the unsuccessful selection of a playlist, because the id is too high
      * @return a message that shows the id of the playlist the user attempts to select is too high
      */
     public static String tooHighIdPlaylistMessage() {

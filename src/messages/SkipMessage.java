@@ -4,7 +4,7 @@ import checker.CheckerConstants;
 
 public abstract class SkipMessage {
     /***
-     *
+     * method that prints the loaded source is not a podcast
      * @return a message that shows the loaded source is not a podcast
      */
     public static String loadedSourceNotPodcastMessage() {

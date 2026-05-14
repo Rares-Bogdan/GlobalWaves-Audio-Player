@@ -4,7 +4,7 @@ import checker.CheckerConstants;
 
 public final class ForwardMessage extends SkipMessage {
     /***
-     *
+     * method that prints the successful forward of a source message
      * @return a message that shows a source has been forwarded successfully
      */
     public static String forwardSkipSuccessMessage() {
@@ -12,7 +12,7 @@ public final class ForwardMessage extends SkipMessage {
     }
 
     /***
-     *
+     * method that prints the requirement to load a source in order to forward message
      * @return a message that asks the user to load a source before attempting to forward
      */
     public static String noLoadedSourceToForwardMessage() {

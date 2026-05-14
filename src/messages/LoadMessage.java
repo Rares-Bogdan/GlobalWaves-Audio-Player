@@ -4,10 +4,13 @@ import checker.CheckerConstants;
 
 public final class LoadMessage {
 
+    /***
+     * private constructor for LoadMessage class
+     */
     private LoadMessage() { }
 
     /***
-     *
+     * method that prints the successful load of a source message
      * @return a message that shows a source has been loaded successfully
      */
     public static String successMessage() {
@@ -15,7 +18,7 @@ public final class LoadMessage {
     }
 
     /***
-     *
+     * method that prints the requirement to select a source in order to load message
      * @return a message that asks the user to select a source before attempting to load
      */
     public static String selectSourceMessage() {
@@ -23,7 +26,7 @@ public final class LoadMessage {
     }
 
     /***
-     *
+     * method that prints the impossibility to load an empty audio collection message
      * @return a message that shows an empty audio collection cannot be loaded
      */
     public static String emptyAudioCollectionMessage() {
