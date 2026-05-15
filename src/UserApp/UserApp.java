@@ -46,7 +46,12 @@ public class UserApp {
     private String currentPlaylistSelected;
     private Status status;
 
-    public UserApp(UserInput user, LibraryInput library) {
+    /***
+     * constructor for UserApp class
+     * @param user the user
+     * @param library the library of audio sources
+     */
+    public UserApp(final UserInput user, final LibraryInput library) {
         this.user = user;
         this.lastSearchResult = new ArrayList<>();
         this.searchedSongs = new AtomicBoolean(false);
@@ -77,227 +82,315 @@ public class UserApp {
         this.status = new Status();
     }
 
+    /***
+     * user getter
+     * @return user
+     */
     public UserInput getUser() {
         return user;
     }
 
+    /***
+     * lastSearchResult getter
+     * @return lastSearchResult
+     */
     public ArrayList<String> getLastSearchResult() {
         return lastSearchResult;
     }
 
-    public void setLastSearchResult(ArrayList<String> lastSearchResult) {
+    /***
+     * lastSearchResult setter
+     * @param lastSearchResult sets the value for lastSearchResult
+     */
+    public void setLastSearchResult(final ArrayList<String> lastSearchResult) {
         this.lastSearchResult = lastSearchResult;
     }
 
+    /***
+     * searchedSongs getter
+     * @return searchedSongs
+     */
     public AtomicBoolean getSearchedSongs() {
         return searchedSongs;
     }
 
-    public void setSearchedSongs(AtomicBoolean searchedSongs) {
-        this.searchedSongs = searchedSongs;
-    }
-
+    /***
+     * selectedSong getter
+     * @return selectedSong
+     */
     public AtomicBoolean getSelectedSong() {
         return selectedSong;
     }
 
-    public void setSelectedSong(AtomicBoolean selectedSong) {
+    /***
+     * selectedSong setter
+     * @param selectedSong sets the value for selectedSong
+     */
+    public void setSelectedSong(final AtomicBoolean selectedSong) {
         this.selectedSong = selectedSong;
     }
 
+    /***
+     * searchedPlaylist getter
+     * @return searchedPlaylist
+     */
     public AtomicBoolean getSearchedPlaylist() {
         return searchedPlaylist;
     }
 
-    public void setSearchedPlaylist(AtomicBoolean searchedPlaylist) {
-        this.searchedPlaylist = searchedPlaylist;
-    }
-
+    /***
+     * selectedPlaylist getter
+     * @return selectedPlaylist
+     */
     public AtomicBoolean getSelectedPlaylist() {
         return selectedPlaylist;
     }
 
-    public void setSelectedPlaylist(AtomicBoolean selectedPlaylist) {
+    /***
+     * selectedPlaylist setter
+     * @param selectedPlaylist sets the value for selectedPlaylist
+     */
+    public void setSelectedPlaylist(final AtomicBoolean selectedPlaylist) {
         this.selectedPlaylist = selectedPlaylist;
     }
 
+    /***
+     * searchedPodcast getter
+     * @return searchedPodcast
+     */
     public AtomicBoolean getSearchedPodcast() {
         return searchedPodcast;
     }
 
-    public void setSearchedPodcast(AtomicBoolean searchedPodcast) {
-        this.searchedPodcast = searchedPodcast;
-    }
-
+    /***
+     * selectedPodcast getter
+     * @return selectedPodcast
+     */
     public AtomicBoolean getSelectedPodcast() {
         return selectedPodcast;
     }
 
-    public void setSelectedPodcast(AtomicBoolean selectedPodcast) {
+    /***
+     * selectedPodcast setter
+     * @param selectedPodcast sets the value for selectedPodcast
+     */
+    public void setSelectedPodcast(final AtomicBoolean selectedPodcast) {
         this.selectedPodcast = selectedPodcast;
     }
 
+    /***
+     * musicPlayer getter
+     * @return musicPlayer
+     */
     public MusicPlayer getMusicPlayer() {
         return musicPlayer;
     }
 
-    public void setMusicPlayer(MusicPlayer musicPlayer) {
-        this.musicPlayer = musicPlayer;
-    }
-
+    /***
+     * lastIndexSelected getter
+     * @return lastIndexSelected
+     */
     public AtomicInteger getLastIndexSelected() {
         return lastIndexSelected;
     }
 
-    public void setLastIndexSelected(AtomicInteger lastIndexSelected) {
-        this.lastIndexSelected = lastIndexSelected;
-    }
-
-    public SearchBarSongResults getSearchBarSongResults() {
-        return searchBarSongResults;
-    }
-
-    public void setSearchBarSongResults(SearchBarSongResults searchBarSongResults) {
-        this.searchBarSongResults = searchBarSongResults;
-    }
-
-    public SearchBarPodcastResults getSearchBarPodcastResults() {
-        return searchBarPodcastResults;
-    }
-
-    public void setSearchBarPodcastResults(SearchBarPodcastResults searchBarPodcastResults) {
-        this.searchBarPodcastResults = searchBarPodcastResults;
-    }
-
-    public SelectResult getSelectResult() {
-        return selectResult;
-    }
-
-    public void setSelectResult(SelectResult selectResult) {
-        this.selectResult = selectResult;
-    }
-
+    /***
+     * loadedSource getter
+     * @return loadedSource
+     */
     public AtomicBoolean getLoadedSource() {
         return loadedSource;
     }
 
-    public void setLoadedSource(AtomicBoolean loadedSource) {
+    /***
+     * loadedSource setter
+     * @param loadedSource sets the value for loadedSource
+     */
+    public void setLoadedSource(final AtomicBoolean loadedSource) {
         this.loadedSource = loadedSource;
     }
 
+    /***
+     * lastLoadedSource getter
+     * @return lastLoadedSource
+     */
     public LastLoadedSource getLastLoadedSource() {
         return lastLoadedSource;
     }
 
-    public void setLastLoadedSource(LastLoadedSource lastLoadedSource) {
+    /***
+     * lastLoadedSource setter
+     * @param lastLoadedSource sets the value for lastLoadedSource
+     */
+    public void setLastLoadedSource(final LastLoadedSource lastLoadedSource) {
         this.lastLoadedSource = lastLoadedSource;
     }
 
-    public AtomicInteger getLastPlayPauseTimestamp() {
-        return lastPlayPauseTimestamp;
-    }
-
-    public void setLastPlayPauseTimestamp(AtomicInteger lastPlayPauseTimestamp) {
-        this.lastPlayPauseTimestamp = lastPlayPauseTimestamp;
-    }
-
+    /***
+     * currentRemainedTime getter
+     * @return currentRemainedTime
+     */
     public int getCurrentRemainedTime() {
         return currentRemainedTime;
     }
 
-    public void setCurrentRemainedTime(int currentRemainedTime) {
+    /***
+     * currentRemainedTime setter
+     * @param currentRemainedTime sets the value for currentRemainedTime
+     */
+    public void setCurrentRemainedTime(final int currentRemainedTime) {
         this.currentRemainedTime = currentRemainedTime;
     }
 
+    /***
+     * userPlaylists getter
+     * @return userPlaylists
+     */
     public ArrayList<Playlist> getUserPlaylists() {
         return userPlaylists;
     }
 
-    public void setUserPlaylists(ArrayList<Playlist> userPlaylists) {
-        this.userPlaylists = userPlaylists;
-    }
-
+    /***
+     * preferredSongs getter
+     * @return preferredSongs
+     */
     public Playlist getPreferredSongs() {
         return preferredSongs;
     }
 
-    public void setPreferredSongs(Playlist preferredSongs) {
-        this.preferredSongs = preferredSongs;
-    }
-
+    /***
+     * noLoadedSourceAfterSearch getter
+     * @return noLoadedSourceAfterSearch
+     */
     public AtomicBoolean getNoLoadedSourceAfterSearch() {
         return noLoadedSourceAfterSearch;
     }
 
-    public void setNoLoadedSourceAfterSearch(AtomicBoolean noLoadedSourceAfterSearch) {
+    /***
+     * noLoadedSourceAfterSearch setter
+     * @param noLoadedSourceAfterSearch sets the value for noLoadedSourceAfterSearch
+     */
+    public void setNoLoadedSourceAfterSearch(final AtomicBoolean noLoadedSourceAfterSearch) {
         this.noLoadedSourceAfterSearch = noLoadedSourceAfterSearch;
     }
 
+    /***
+     * lastPodcastSelected getter
+     * @return lastPodcastSelected
+     */
     public LastPodcastSelected getLastPodcastSelected() {
         return lastPodcastSelected;
     }
 
-    public void setLastPodcastSelected(LastPodcastSelected lastPodcastSelected) {
+    /***
+     * lastPodcastSelected setter
+     * @param lastPodcastSelected sets the value for lastPodcastSelected
+     */
+    public void setLastPodcastSelected(final LastPodcastSelected lastPodcastSelected) {
         this.lastPodcastSelected = lastPodcastSelected;
     }
 
+    /***
+     * lastPlaylistSelected getter
+     * @return lastPlaylistSelected
+     */
     public LastPlaylistSelected getLastPlaylistSelected() {
         return lastPlaylistSelected;
     }
 
-    public void setLastPlaylistSelected(LastPlaylistSelected lastPlaylistSelected) {
+    /***
+     * lastPlaylistSelected setter
+     * @param lastPlaylistSelected sets the value for lastPlaylistSelected
+     */
+    public void setLastPlaylistSelected(final LastPlaylistSelected lastPlaylistSelected) {
         this.lastPlaylistSelected = lastPlaylistSelected;
     }
 
+    /***
+     * songsIndexesInPlaylist getter
+     * @return songsIndexesInPlaylist
+     */
     public ArrayList<Integer> getSongsIndexesInPlaylist() {
         return songsIndexesInPlaylist;
     }
 
-    public void setSongsIndexesInPlaylist(ArrayList<Integer> songsIndexesInPlaylist) {
+    /***
+     * songsIndexesInPlaylist setter
+     * @param songsIndexesInPlaylist sets the value for songsIndexesInPlaylist
+     */
+    public void setSongsIndexesInPlaylist(final ArrayList<Integer> songsIndexesInPlaylist) {
         this.songsIndexesInPlaylist = songsIndexesInPlaylist;
     }
 
+    /***
+     * changedSongsPositionsNames getter
+     * @return changedSongsPositionsNames
+     */
     public ArrayList<String> getChangedSongsPositionsNames() {
         return changedSongsPositionsNames;
     }
 
-    public void setChangedSongsPositionsNames(ArrayList<String> changedSongsPositionsNames) {
+    /***
+     * changedSongsPositionsNames setter
+     * @param changedSongsPositionsNames sets the value for changesSongsPositionsNames
+     */
+    public void setChangedSongsPositionsNames(final ArrayList<String> changedSongsPositionsNames) {
         this.changedSongsPositionsNames = changedSongsPositionsNames;
     }
 
+    /***
+     * followedPlaylists getter
+     * @return followedPlaylists
+     */
     public ArrayList<Playlist> getFollowedPlaylists() {
         return followedPlaylists;
     }
 
-    public void setFollowedPlaylists(ArrayList<Playlist> followedPlaylists) {
-        this.followedPlaylists = followedPlaylists;
-    }
-
+    /***
+     * cannotSelectYet getter
+     * @return cannotSelectYet
+     */
     public AtomicBoolean getCannotSelectYet() {
         return cannotSelectYet;
     }
 
-    public void setCannotSelectYet(AtomicBoolean cannotSelectYet) {
+    /***
+     * cannotSelectYet setter
+     * @param cannotSelectYet sets the value for cannotSelectYet
+     */
+    public void setCannotSelectYet(final AtomicBoolean cannotSelectYet) {
         this.cannotSelectYet = cannotSelectYet;
     }
 
+    /***
+     * currentPlaylistSelected getter
+     * @return currentPlaylistSelected
+     */
     public String getCurrentPlaylistSelected() {
         return currentPlaylistSelected;
     }
 
-    public void setCurrentPlaylistSelected(String currentPlaylistSelected) {
+    /***
+     * currentPlaylistSelected setter
+     * @param currentPlaylistSelected sets the value for currentPlaylistSelected
+     */
+    public void setCurrentPlaylistSelected(final String currentPlaylistSelected) {
         this.currentPlaylistSelected = currentPlaylistSelected;
     }
 
+    /***
+     * status getter
+     * @return status
+     */
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    /***
+     * status setter
+     * @param status sets the value for status
+     */
+    public void setStatus(final Status status) {
         this.status = status;
-    }
-
-    public void setStatusPlayPause(boolean value) {
-        this.status.setPaused(value);
     }
 }

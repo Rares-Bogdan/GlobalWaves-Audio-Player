@@ -15,15 +15,28 @@ public class SearchBarSongResults implements SearchBar {
     private ArrayList<SongInput> songs;
     private ArrayList<String> lastSearchResult;
 
-    public SearchBarSongResults(ArrayList<SongInput> songs) {
+    /***
+     * constructor for SearchBarSongResult class
+     * @param songs the list of songs
+     */
+    public SearchBarSongResults(final ArrayList<SongInput> songs) {
         this.songs = songs;
     }
 
+    /***
+     * songs getter
+     * @return the list of names of songs
+     */
     public ArrayList<SongInput> getSongs() {
         return songs;
     }
 
-    public ArrayList<SongInput> filterSongsByAlbum(String album) {
+    /***
+     * method that filters the search result by the album the songs belong to
+     * @param album string that represents the album the songs belong to
+     * @return a list of songs that belong to the album found in the string album
+     */
+    public ArrayList<SongInput> filterSongsByAlbum(final String album) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             if (currentSong.getAlbum().compareTo(album) == 0) {
@@ -37,7 +50,12 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByArtist(String artist) {
+    /***
+     * method that filters the search result by the artist that composed the songs
+     * @param artist string that represents the artist that composed the songs
+     * @return a list of songs that belong to the artist found in the string artist
+     */
+    public ArrayList<SongInput> filterSongsByArtist(final String artist) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             if (currentSong.getArtist().compareTo(artist) == 0) {
@@ -51,7 +69,12 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByGenre(String genre) {
+    /***
+     * method that filters the search result by the genre the songs belong to
+     * @param genre string that represents the genre the songs belong to
+     * @return a list of songs that belong to the genre found in the string genre
+     */
+    public ArrayList<SongInput> filterSongsByGenre(final String genre) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             if (currentSong.getGenre().compareToIgnoreCase(genre) == 0) {
@@ -65,7 +88,12 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByLyrics(String lyrics) {
+    /***
+     * method that filters the search result by the lyrics found in the song
+     * @param lyrics string that represents the lyrics found in the song
+     * @return a list of songs that contain the lyrics found in the string lyrics
+     */
+    public ArrayList<SongInput> filterSongsByLyrics(final String lyrics) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             if (currentSong.getLyrics().toLowerCase().contains(lyrics.toLowerCase())) {
@@ -79,7 +107,13 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByName(String name) {
+    /***
+     * method that filters the search of the songs by a string the name of a song starts
+     * with
+     * @param name string that is used to check if a song's name starts with it
+     * @return a list of songs that start with the string name
+     */
+    public ArrayList<SongInput> filterSongsByName(final String name) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             if (currentSong.getName().startsWith(name)) {
@@ -93,17 +127,21 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByReleaseYear(String releaseYear) {
+    /***
+     * method that filters the search result by the condition found in the string releaseYear
+     * (it can be lower or higher than the release year)
+     * @param releaseYear string that contains a comparer and a year
+     * @return a list of songs that are lower or higher than the release year from the condition
+     */
+    public ArrayList<SongInput> filterSongsByReleaseYear(final String releaseYear) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         int comparingYearToInt = Integer.parseInt(releaseYear.substring(1));
         for (SongInput currentSong : getSongs()) {
             if (releaseYear.charAt(0) == '<') {
-                if (currentSong.getReleaseYear() < comparingYearToInt)
-                {
+                if (currentSong.getReleaseYear() < comparingYearToInt) {
                     filteredSongs.add(currentSong);
                 }
-            }
-            else {
+            } else {
                 if (currentSong.getReleaseYear() > comparingYearToInt) {
                     filteredSongs.add(currentSong);
                 }
@@ -116,13 +154,17 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
-    public ArrayList<SongInput> filterSongsByTags(ArrayList<String> tags) {
+    /***
+     * method that filters the search result by the tags found in the songs
+     * @param tags list of strings that contain the tags in the songs
+     * @return a list of songs that contain the tags in the parameter tags
+     */
+    public ArrayList<SongInput> filterSongsByTags(final ArrayList<String> tags) {
         ArrayList<SongInput> filteredSongs = new ArrayList<>();
         for (SongInput currentSong : getSongs()) {
             boolean doesNotHaveAllTags = false;
             for (String currentTag : tags) {
-                if (!currentSong.getTags().contains(currentTag))
-                {
+                if (!currentSong.getTags().contains(currentTag)) {
                     doesNotHaveAllTags = true;
                     break;
                 }
@@ -138,8 +180,15 @@ public class SearchBarSongResults implements SearchBar {
         return filteredSongs;
     }
 
+    /***
+     * method that helps print the output for search command
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @return an object node that stores the result message for the search command used on
+     * songs
+     */
     @Override
-    public ObjectNode searchResult(ObjectMapper objectMapper, Command currentCommand) {
+    public ObjectNode searchResult(final ObjectMapper objectMapper, final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());
@@ -178,13 +227,21 @@ public class SearchBarSongResults implements SearchBar {
         return objectNode;
     }
 
+    /***
+     * lastSearchResult getter
+     * @return the list of names of songs from the last search result
+     */
     @Override
     public ArrayList<String> getLastSearchResult() {
         return lastSearchResult;
     }
 
+    /***
+     * lastSearchResult setter
+     * @param result sets the names of songs from the last search result
+     */
     @Override
-    public void setLastSearchResult(ArrayList<String> result) {
+    public void setLastSearchResult(final ArrayList<String> result) {
         this.lastSearchResult = result;
     }
 }

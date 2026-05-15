@@ -7,32 +7,55 @@ import command.Command;
 import messages.SelectMessage;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SelectResult extends SelectMessage {
     private int itemNumber;
     private boolean hasBeenSelectedSuccessfully;
 
-    public SelectResult(int itemNumber) {
+    /***
+     * constructor for SelectResult class
+     * @param itemNumber index of source that is selected the object is initialized with
+     */
+    public SelectResult(final int itemNumber) {
         this.itemNumber = itemNumber;
     }
 
+    /***
+     * itemNumber getter
+     * @return index of source that is selected
+     */
     public int getItemNumber() {
         return itemNumber;
     }
 
+    /***
+     * hasBeenSelectedSuccessfully getter
+     * @return true if the source has been selected successfully or false otherwise
+     */
     public boolean hasBeenSelectedSuccessfully() {
         return hasBeenSelectedSuccessfully;
     }
 
-    public void setHasBeenSelectedSuccessfully(boolean hasBeenSelectedSuccessfully) {
+    /***
+     * hasBeenSelectedSuccessfully setter
+     * @param hasBeenSelectedSuccessfully sets the value for hasBeenSelectedSuccessfully
+     */
+    public void setHasBeenSelectedSuccessfully(final boolean hasBeenSelectedSuccessfully) {
         this.hasBeenSelectedSuccessfully = hasBeenSelectedSuccessfully;
     }
 
-    public ObjectNode getObjectNodeForSelectResult(ObjectMapper objectMapper,
-                                                   Command currentCommand,
-                                                   ArrayList<String> lastSearchResult,
-                                                   boolean cannotSelectYet) {
+    /***
+     * method that helps print the output for select command
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @param lastSearchResult list of strings obtained after the last search
+     * @param cannotSelectYet checks if the source can be selected or not
+     * @return an object node that stores the result message for the select command
+     */
+    public ObjectNode getObjectNodeForSelectResult(final ObjectMapper objectMapper,
+                                                   final Command currentCommand,
+                                                   final ArrayList<String> lastSearchResult,
+                                                   final boolean cannotSelectYet) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());

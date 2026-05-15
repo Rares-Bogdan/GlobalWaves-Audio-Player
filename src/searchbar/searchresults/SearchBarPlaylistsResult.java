@@ -15,29 +15,47 @@ public class SearchBarPlaylistsResult implements SearchBar {
     private ArrayList<Playlist> playlists;
     private ArrayList<String> lastSearchResult;
 
-    public SearchBarPlaylistsResult(ArrayList<Playlist> playlists) {
+    /***
+     * constructor for SearchBarPlaylistsResult class
+     * @param playlists the list of playlists the object is initialized with
+     */
+    public SearchBarPlaylistsResult(final ArrayList<Playlist> playlists) {
         this.playlists = playlists;
     }
 
+    /***
+     * playlists getter
+     * @return the list of playlists
+     */
     public ArrayList<Playlist> getPlaylists() {
         return playlists;
     }
 
-    public void setPlaylists(ArrayList<Playlist> playlists) {
-        this.playlists = playlists;
-    }
-
+    /***
+     * lastSearchResult getter
+     * @return the list of names of the playlists
+     */
     @Override
     public ArrayList<String> getLastSearchResult() {
         return lastSearchResult;
     }
 
+    /***
+     * lastSearchResult setter
+     * @param lastSearchResult sets the value for lastSearchResult
+     */
     @Override
-    public void setLastSearchResult(ArrayList<String> lastSearchResult) {
+    public void setLastSearchResult(final ArrayList<String> lastSearchResult) {
         this.lastSearchResult = lastSearchResult;
     }
 
-    public ArrayList<Playlist> filterPlaylistsByName(String name) {
+    /***
+     * method that filters the search of the playlists by a string the name of a playlist starts
+     * with
+     * @param name string that is used to check if a playlist's name starts with it
+     * @return a list of playlists that start with the string name
+     */
+    public ArrayList<Playlist> filterPlaylistsByName(final String name) {
         ArrayList<Playlist> filteredPlaylists = new ArrayList<>();
         for (Playlist currentPlaylist : getPlaylists()) {
             if (currentPlaylist.getName().startsWith(name)) {
@@ -51,7 +69,12 @@ public class SearchBarPlaylistsResult implements SearchBar {
         return filteredPlaylists;
     }
 
-    public ArrayList<Playlist> filterPlaylistsByOwner(String owner) {
+    /***
+     * method that filters the search of playlists by the owner's name
+     * @param owner the name of the owner
+     * @return a list of playlists that are owned by the user with the name from the string owner
+     */
+    public ArrayList<Playlist> filterPlaylistsByOwner(final String owner) {
         ArrayList<Playlist> filteredPlaylists = new ArrayList<>();
         for (Playlist currentPlaylist : getPlaylists()) {
             if (currentPlaylist.getOwner().compareTo(owner) == 0) {
@@ -65,8 +88,15 @@ public class SearchBarPlaylistsResult implements SearchBar {
         return filteredPlaylists;
     }
 
+    /***
+     * method that helps print the output for search command
+     * @param objectMapper object used to print the output in JSON format
+     * @param currentCommand current command used
+     * @return an object node that stores the result message for the search command used on
+     * playlists
+     */
     @Override
-    public ObjectNode searchResult(ObjectMapper objectMapper, Command currentCommand) {
+    public ObjectNode searchResult(final ObjectMapper objectMapper, final Command currentCommand) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
         objectNode.put(CheckerConstants.USER_FIELD, currentCommand.getUsername());
