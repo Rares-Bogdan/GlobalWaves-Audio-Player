@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Command;
-import commandsworkflow.GetTopFivePlaylistsWorkflow;
-import commandsworkflow.GetTopFiveSongsWorkflow;
+import commandsworkflow.*;
 import fileio.input.EpisodeInput;
 import fileio.input.LibraryInput;
 import fileio.input.PodcastInput;
@@ -35,6 +34,7 @@ import musicplayer.playercommands.loadresults.LoadSongResult;
 import playlist.Playlist;
 import playlist.PlaylistJsonNode;
 import playlist.playlistcommands.FollowPlaylist;
+import playlist.playlistcommands.ShowPlaylists;
 import playlist.playlistcommands.SwitchVisibility;
 import searchbar.searchresults.SearchBarPlaylistsResult;
 import searchbar.searchresults.SearchBarPodcastResults;
@@ -42,6 +42,7 @@ import searchbar.searchresults.SearchBarSongResults;
 import searchbar.selectresult.SelectResult;
 import statistics.GetTopFivePlaylists;
 import statistics.GetTopFiveSongs;
+import statistics.ShowPreferredSongs;
 
 import java.io.File;
 import java.io.IOException;
@@ -311,8 +312,8 @@ public final class Main {
                     followCommand(objectMapper, currentCommand, usersData.get(position), outputs,
                             allPlaylists);
                 case CheckerConstants.SWITCH_VISIBILITY_COMMAND ->
-                    switchVisibilityCommand(objectMapper, currentCommand, usersData.get(position).
-                            getUserPlaylists(), outputs);
+                    switchVisibilityCommand(objectMapper, currentCommand, usersData.get(position),
+                            outputs);
                 case CheckerConstants.GET_TOP_FIVE_PLAYLISTS_COMMAND ->
                         getTop5PlaylistsCommand(objectMapper, currentCommand, allPlaylists,
                                 outputs);
@@ -961,33 +962,12 @@ public final class Main {
     public static void showPlaylistsCommand(final ObjectMapper objectMapper,
                                             final Command currentCommand,
                                             final UserApp userApp, final ArrayNode outputs) {
-        ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper, currentCommand);
-        ArrayList<ArrayList<String>> userPlaylistsSongNames = new ArrayList<>();
-        for (int currentPlaylist = 0; currentPlaylist < userApp.getUserPlaylists().size();
-             currentPlaylist++) {
-            userPlaylistsSongNames.add(new ArrayList<>());
-            for (SongInput currentSong : userApp.getUserPlaylists().get(currentPlaylist).
-                    getSongs()) {
-                userPlaylistsSongNames.get(currentPlaylist).add(currentSong.getName());
-            }
-        }
-        ArrayList<PlaylistJsonNode> playlistJsonNodes = new ArrayList<>();
-        int currentPlaylistIndex = 0;
-        for (Playlist currentPlaylist : userApp.getUserPlaylists()) {
-            String visibilityString;
-            if (currentPlaylist.isVisibility()) {
-                visibilityString = CheckerConstants.PUBLIC;
-            } else {
-                visibilityString = CheckerConstants.PRIVATE;
-            }
-            playlistJsonNodes.add(new PlaylistJsonNode(currentPlaylist.getName(),
-                    userPlaylistsSongNames.get(currentPlaylistIndex), visibilityString,
-                    currentPlaylist.getFollowers()));
-            currentPlaylistIndex++;
-        }
-
-        JsonNode jsonNode = objectMapper.valueToTree(playlistJsonNodes);
-        objectNode.set(CheckerConstants.RESULT_PATH, jsonNode);
+        ShowPlaylistsWorkflow showPlaylistsWorkflow = new ShowPlaylistsWorkflow(currentCommand,
+                userApp);
+        ArrayList<PlaylistJsonNode> playlistJsonNodes = showPlaylistsWorkflow.
+                showPlaylistsCommandWorkflow();
+        ShowPlaylists showPlaylists = new ShowPlaylists(playlistJsonNodes);
+        ObjectNode objectNode = showPlaylists.showPlaylistsResult(objectMapper, currentCommand);
         outputs.add(objectNode);
     }
 
@@ -1001,13 +981,13 @@ public final class Main {
     public static void showPreferredSongsCommand(final ObjectMapper objectMapper,
                                                  final Command currentCommand,
                                                  final UserApp userApp, final ArrayNode outputs) {
-        ObjectNode objectNode = getDefaultObjectNodeParameters(objectMapper, currentCommand);
         ArrayList<String> preferredSongsNames = new ArrayList<>();
         for (SongInput currentSong : userApp.getPreferredSongs().getSongs()) {
             preferredSongsNames.add(currentSong.getName());
         }
-        JsonNode jsonNode = objectMapper.valueToTree(preferredSongsNames);
-        objectNode.set(CheckerConstants.RESULT_PATH, jsonNode);
+        ShowPreferredSongs showPreferredSongs = new ShowPreferredSongs(preferredSongsNames);
+        ObjectNode objectNode = showPreferredSongs.showPreferredSongsResult(objectMapper,
+                currentCommand);
         outputs.add(objectNode);
     }
 
@@ -1593,47 +1573,13 @@ public final class Main {
         boolean isSelectedSourcePlaylist = !userApp.getCurrentPlaylistSelected().isEmpty()
                 && userApp.getSelectedPlaylist().get();
         boolean hasBeenFollowed = false;
-        int playlistToBeRemovedIndex = -1;
         boolean selfPlaylistFollowAttempt = false;
-        for (int currentPlaylist = 0; currentPlaylist < userApp.getFollowedPlaylists().size();
-             currentPlaylist++) {
-            if (userApp.getFollowedPlaylists().get(currentPlaylist).getName().compareTo(
-                    userApp.getCurrentPlaylistSelected()) == 0) {
-                hasBeenFollowed = true;
-                playlistToBeRemovedIndex = currentPlaylist;
-                break;
-            }
-        }
-        if (hasBeenFollowed) {
-            userApp.getFollowedPlaylists().remove(userApp.getFollowedPlaylists().get(
-                    playlistToBeRemovedIndex));
-            for (Playlist currentPlaylist : allPlaylists) {
-                if (currentPlaylist.getName().compareTo(userApp.
-                        getCurrentPlaylistSelected()) == 0) {
-                    currentPlaylist.setFollowers(currentPlaylist.getFollowers() - 1);
-                }
-            }
-        } else {
-            for (int currentPlaylist = 0; currentPlaylist < allPlaylists.size();
-                 currentPlaylist++) {
-                if (getPlaylist(allPlaylists, currentPlaylist).getName().compareTo(userApp.
-                        getCurrentPlaylistSelected()) == 0) {
-                    if (allPlaylists.get(currentPlaylist).getOwner().compareTo(
-                            currentCommand.getUsername()) == 0) {
-                        selfPlaylistFollowAttempt = true;
-                    } else {
-                        allPlaylists.get(currentPlaylist).setFollowers(allPlaylists.get(
-                                currentPlaylist).getFollowers() + 1);
-                        userApp.getFollowedPlaylists().add(getPlaylist(allPlaylists,
-                                currentPlaylist));
-                    }
-                    break;
-                }
-            }
-        }
-
-        FollowPlaylist followPlaylist = new FollowPlaylist(hasBeenFollowed,
-                isSelectedSourcePlaylist, hasSelectedSource, selfPlaylistFollowAttempt);
+        FollowWorkflow followWorkflow = new FollowWorkflow(currentCommand, userApp, allPlaylists,
+                hasBeenFollowed, selfPlaylistFollowAttempt);
+        userApp.setFollowedPlaylists(followWorkflow.followCommandWorkflow());
+        FollowPlaylist followPlaylist = new FollowPlaylist(followWorkflow.isHasBeenFollowed(),
+                isSelectedSourcePlaylist, hasSelectedSource, followWorkflow.
+                isSelfPlaylistFollowAttempt());
         ObjectNode objectNode = followPlaylist.followPlaylistResult(objectMapper, currentCommand);
         outputs.add(objectNode);
     }
@@ -1642,33 +1588,21 @@ public final class Main {
      *
      * @param objectMapper object used to convert data to JSON format
      * @param currentCommand current command used
-     * @param userPlaylists all playlists belonging to a user
+     * @param userApp object used to store all the data concerning a user
      * @param outputs object used to print the converted into JSON data
      */
     private static void switchVisibilityCommand(final ObjectMapper objectMapper,
                                                 final Command currentCommand,
-                                                final ArrayList<Playlist> userPlaylists,
+                                                final UserApp userApp,
                                                 final ArrayNode outputs) {
-        boolean tooHighIdPlaylist = currentCommand.getPlaylistId() > userPlaylists.size();
+        boolean tooHighIdPlaylist = currentCommand.getPlaylistId() > userApp.getUserPlaylists().
+                size();
         boolean visibilityStatus = false;
-        int foundPlaylistIndex = -1;
-        if (!tooHighIdPlaylist) {
-            for (int currentPlaylist = 0; currentPlaylist < userPlaylists.size();
-                 currentPlaylist++) {
-                if (currentPlaylist == currentCommand.getPlaylistId() - 1) {
-                    foundPlaylistIndex = currentPlaylist;
-                    userPlaylists.get(currentPlaylist).setVisibility(!userPlaylists.
-                            get(currentPlaylist).isVisibility());
-                    break;
-                }
-            }
-        }
-
-        if (foundPlaylistIndex > -1) {
-            visibilityStatus = userPlaylists.get(foundPlaylistIndex).isVisibility();
-        }
-        SwitchVisibility switchVisibility = new SwitchVisibility(visibilityStatus,
-                tooHighIdPlaylist);
+        SwitchVisibilityWorkflow switchVisibilityWorkflow = new SwitchVisibilityWorkflow(
+                currentCommand, userApp, tooHighIdPlaylist, visibilityStatus);
+        userApp.setUserPlaylists(switchVisibilityWorkflow.switchVisibilityCommandWorkflow());
+        SwitchVisibility switchVisibility = new SwitchVisibility(switchVisibilityWorkflow.
+                isVisibilityStatus(), tooHighIdPlaylist);
         ObjectNode objectNode = switchVisibility.switchVisibilityResult(objectMapper,
                 currentCommand);
         outputs.add(objectNode);
@@ -1688,8 +1622,8 @@ public final class Main {
                                     final LibraryInput library,
                                     final ArrayList<Integer> likesForEachSongInLibrary,
                                     final ArrayNode outputs) {
-        GetTopFiveSongsWorkflow getTopFiveSongsWorkflow = new GetTopFiveSongsWorkflow(objectMapper,
-                currentCommand, library, likesForEachSongInLibrary);
+        GetTopFiveSongsWorkflow getTopFiveSongsWorkflow = new GetTopFiveSongsWorkflow(library,
+                likesForEachSongInLibrary);
         ArrayList<String> top5Songs = getTopFiveSongsWorkflow.getTopFiveSongsCommandWorkflow();
         GetTopFiveSongs getTopFiveSongs = new GetTopFiveSongs(top5Songs);
         ObjectNode objectNode = getTopFiveSongs.getTop5SongsResult(objectMapper, currentCommand);
@@ -1708,25 +1642,13 @@ public final class Main {
                                                final ArrayList<Playlist> allPlaylists,
                                                final ArrayNode outputs) {
         GetTopFivePlaylistsWorkflow getTopFivePlaylistsWorkflow = new GetTopFivePlaylistsWorkflow(
-                objectMapper, currentCommand, allPlaylists);
+                allPlaylists);
         ArrayList<String> top5Playlists = getTopFivePlaylistsWorkflow.
                 getTop5PlaylistsCommandWorkflow();
         GetTopFivePlaylists getTopFivePlaylists = new GetTopFivePlaylists(top5Playlists);
         ObjectNode objectNode = getTopFivePlaylists.topFivePlaylistsResult(objectMapper,
                 currentCommand);
         outputs.add(objectNode);
-    }
-
-    /***
-     *
-     * @param searchablePlaylists all playlists a user can find (contains said user's playlists
-     *                            and public playlists)
-     * @param currentPlaylist index for the playlist we want to get
-     * @return a playlist in the searchable list of playlists of a user
-     */
-    private static Playlist getPlaylist(final ArrayList<Playlist> searchablePlaylists,
-                                        final int currentPlaylist) {
-        return searchablePlaylists.get(currentPlaylist);
     }
 
     /***

@@ -1,51 +1,36 @@
 package commandsworkflow;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import UserApp.UserApp;
 import command.Command;
 
 public abstract class CommandWorkflow {
-    private ObjectMapper objectMapper;
+
     private Command currentCommand;
+    private UserApp userApp;
 
     /***
      * constructor for CommandWorkflow abstract class
-     * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
+     * @param userApp object used to store all the data concerning a user
      */
-    public CommandWorkflow(final ObjectMapper objectMapper, final Command currentCommand) {
-        this.objectMapper = objectMapper;
+    public CommandWorkflow(final Command currentCommand, final UserApp userApp) {
         this.currentCommand = currentCommand;
-    }
-
-    /***
-     * objectMapper getter
-     * @return objectMapper
-     */
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
-
-    /***
-     * objectMapper setter
-     * @param objectMapper sets the value for objectMapper
-     */
-    public void setObjectMapper(final ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+        this.userApp = userApp;
     }
 
     /***
      * currentCommand getter
-     * @return currentCommand
+     * @return current command used
      */
     public Command getCurrentCommand() {
         return currentCommand;
     }
 
     /***
-     * currentCommand setter
-     * @param currentCommand sets the value for currentCommand
+     * userApp getter
+     * @return userApp
      */
-    public void setCurrentCommand(final Command currentCommand) {
-        this.currentCommand = currentCommand;
+    public UserApp getUserApp() {
+        return userApp;
     }
 }

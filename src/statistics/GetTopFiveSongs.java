@@ -28,7 +28,7 @@ public class GetTopFiveSongs {
     }
 
     /***
-     * method that helps print the output for getTop5Songs command
+     * method that stores the output for getTop5Songs command in an object node
      * @param objectMapper object used to print the output in JSON format
      * @param currentCommand current command used
      * @return an object node that stores the result message for getTop5Songs command

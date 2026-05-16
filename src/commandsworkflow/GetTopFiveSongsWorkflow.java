@@ -7,19 +7,18 @@ import fileio.input.LibraryInput;
 
 import java.util.ArrayList;
 
-public class GetTopFiveSongsWorkflow extends CommandWorkflow {
+public class GetTopFiveSongsWorkflow {
     private LibraryInput library;
     private ArrayList<Integer> likesForEachSongInLibrary;
 
     /***
-     * constructor for CommandWorkflow abstract class
-     * @param objectMapper object used to print the output in JSON format
-     * @param currentCommand current command used
+     * constructor for GetTopFiveSongsWorkflow class
+     * @param library library containing all songs, podcasts and users
+     * @param likesForEachSongInLibrary list containing the number of likes for each song in
+     *                                  library
      */
-    public GetTopFiveSongsWorkflow(final ObjectMapper objectMapper, final Command currentCommand,
-                                   final LibraryInput library,
+    public GetTopFiveSongsWorkflow(final LibraryInput library,
                                    final ArrayList<Integer> likesForEachSongInLibrary) {
-        super(objectMapper, currentCommand);
         this.library = library;
         this.likesForEachSongInLibrary = likesForEachSongInLibrary;
     }

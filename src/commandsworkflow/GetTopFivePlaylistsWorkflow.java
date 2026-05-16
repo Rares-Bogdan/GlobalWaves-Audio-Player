@@ -7,19 +7,14 @@ import playlist.Playlist;
 
 import java.util.ArrayList;
 
-public class GetTopFivePlaylistsWorkflow extends CommandWorkflow {
+public class GetTopFivePlaylistsWorkflow {
     private ArrayList<Playlist> allPlaylists;
 
     /***
-     * constructor for CommandWorkflow abstract class
-     * @param objectMapper object used to print the output in JSON format
-     * @param currentCommand current command used
+     * constructor for GetTopFivePlaylistsWorkflow class
      * @param allPlaylists all existing playlists
      */
-    public GetTopFivePlaylistsWorkflow(final ObjectMapper objectMapper,
-                                       final Command currentCommand,
-                                       final ArrayList<Playlist> allPlaylists) {
-        super(objectMapper, currentCommand);
+    public GetTopFivePlaylistsWorkflow(final ArrayList<Playlist> allPlaylists) {
         this.allPlaylists = allPlaylists;
     }
 
