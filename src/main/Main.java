@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Command;
+import commandsworkflow.GetTopFivePlaylistsWorkflow;
+import commandsworkflow.GetTopFiveSongsWorkflow;
 import fileio.input.EpisodeInput;
 import fileio.input.LibraryInput;
 import fileio.input.PodcastInput;
@@ -38,6 +40,8 @@ import searchbar.searchresults.SearchBarPlaylistsResult;
 import searchbar.searchresults.SearchBarPodcastResults;
 import searchbar.searchresults.SearchBarSongResults;
 import searchbar.selectresult.SelectResult;
+import statistics.GetTopFivePlaylists;
+import statistics.GetTopFiveSongs;
 
 import java.io.File;
 import java.io.IOException;
@@ -1684,41 +1688,11 @@ public final class Main {
                                     final LibraryInput library,
                                     final ArrayList<Integer> likesForEachSongInLibrary,
                                     final ArrayNode outputs) {
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
-        objectNode.put(CheckerConstants.TIMESTAMP_FIELD, currentCommand.getTimestamp());
-        ArrayList<Integer> likesForEachSongInLibraryBackup = new ArrayList<>(
-                likesForEachSongInLibrary);
-        ArrayList<Integer> likesForEachSongInLibraryBackupIndexes = new ArrayList<>(
-                likesForEachSongInLibrary.size());
-        for (int currentLikesIndex = 0; currentLikesIndex < likesForEachSongInLibrary.size();
-             currentLikesIndex++) {
-            likesForEachSongInLibraryBackupIndexes.add(currentLikesIndex, currentLikesIndex);
-        }
-        for (int currentLikesIndex = 0; currentLikesIndex < likesForEachSongInLibrary.size() - 1;
-             currentLikesIndex++) {
-            for (int currentLikesIndexInsider = currentLikesIndex + 1;
-                 currentLikesIndexInsider < likesForEachSongInLibrary.size();
-                 currentLikesIndexInsider++) {
-                if (likesForEachSongInLibraryBackup.get(currentLikesIndex)
-                        < likesForEachSongInLibraryBackup.get(currentLikesIndexInsider)) {
-                    int temporary = likesForEachSongInLibraryBackupIndexes.get(currentLikesIndex);
-                    likesForEachSongInLibraryBackupIndexes.set(currentLikesIndex,
-                            likesForEachSongInLibraryBackupIndexes.get(currentLikesIndexInsider));
-                    likesForEachSongInLibraryBackupIndexes.set(currentLikesIndexInsider,
-                            temporary);
-                }
-            }
-        }
-
-        ArrayList<String> top5Songs = new ArrayList<>();
-        for (int currentSong = 0; currentSong < CheckerConstants.MAXIMUM_SEARCH_RESULT;
-             currentSong++) {
-            top5Songs.add(library.getSongs().get(likesForEachSongInLibraryBackupIndexes.get(
-                    currentSong)).getName());
-        }
-        JsonNode jsonNode = objectMapper.valueToTree(top5Songs);
-        objectNode.set(CheckerConstants.RESULT_PATH, jsonNode);
+        GetTopFiveSongsWorkflow getTopFiveSongsWorkflow = new GetTopFiveSongsWorkflow(objectMapper,
+                currentCommand, library, likesForEachSongInLibrary);
+        ArrayList<String> top5Songs = getTopFiveSongsWorkflow.getTopFiveSongsCommandWorkflow();
+        GetTopFiveSongs getTopFiveSongs = new GetTopFiveSongs(top5Songs);
+        ObjectNode objectNode = getTopFiveSongs.getTop5SongsResult(objectMapper, currentCommand);
         outputs.add(objectNode);
     }
 
@@ -1733,33 +1707,13 @@ public final class Main {
                                                final Command currentCommand,
                                                final ArrayList<Playlist> allPlaylists,
                                                final ArrayNode outputs) {
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put(CheckerConstants.COMMAND_FIELD, currentCommand.getCommand());
-        objectNode.put(CheckerConstants.TIMESTAMP_FIELD, currentCommand.getTimestamp());
-        int[] allPlaylistsIndexes = new int[allPlaylists.size()];
-        for (int currentIndex = 0; currentIndex < allPlaylists.size(); currentIndex++) {
-            allPlaylistsIndexes[currentIndex] = currentIndex;
-        }
-        for (int currentFollowsIndex = 0; currentFollowsIndex < allPlaylists.size() - 1;
-             currentFollowsIndex++) {
-            for (int currentFollowsIndexInsider = currentFollowsIndex + 1;
-                 currentFollowsIndexInsider < allPlaylists.size(); currentFollowsIndexInsider++) {
-                if (allPlaylists.get(currentFollowsIndex).getFollowers() < allPlaylists.get(
-                        currentFollowsIndexInsider).getFollowers()) {
-                    int temporary = allPlaylistsIndexes[currentFollowsIndex];
-                    allPlaylistsIndexes[currentFollowsIndex] = allPlaylistsIndexes[
-                            currentFollowsIndexInsider];
-                    allPlaylistsIndexes[currentFollowsIndexInsider] = temporary;
-                }
-            }
-        }
-        ArrayList<String> top5Playlists = new ArrayList<>();
-        for (int currentPlaylist = 0; currentPlaylist < Math.min(CheckerConstants.
-                MAXIMUM_SEARCH_RESULT, allPlaylists.size()); currentPlaylist++) {
-            top5Playlists.add(allPlaylists.get(allPlaylistsIndexes[currentPlaylist]).getName());
-        }
-        JsonNode jsonNode = objectMapper.valueToTree(top5Playlists);
-        objectNode.set(CheckerConstants.RESULT_PATH, jsonNode);
+        GetTopFivePlaylistsWorkflow getTopFivePlaylistsWorkflow = new GetTopFivePlaylistsWorkflow(
+                objectMapper, currentCommand, allPlaylists);
+        ArrayList<String> top5Playlists = getTopFivePlaylistsWorkflow.
+                getTop5PlaylistsCommandWorkflow();
+        GetTopFivePlaylists getTopFivePlaylists = new GetTopFivePlaylists(top5Playlists);
+        ObjectNode objectNode = getTopFivePlaylists.topFivePlaylistsResult(objectMapper,
+                currentCommand);
         outputs.add(objectNode);
     }
 
